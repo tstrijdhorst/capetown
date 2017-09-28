@@ -8,5 +8,7 @@
             "email": "tim@decorrespondent.nl"
         }
     ],
-    "require": {}
+    "require": {
+        "react/event-loop": "^0.4.3"
+    }
 }
