@@ -16,7 +16,7 @@ $loop->addPeriodicTimer(
 	3, function () use ($keybaseApi, $giphyApi) {
 	foreach ($keybaseApi->getUnreadMessages() as $message) {
 		if (substr($message->getBody(), 0, 7) === '/giphy ') {
-			$searchQuery = substr($message->getBody(), 7); //@todo this might be off by 1 at the start
+			$searchQuery = substr($message->getBody(), 7);
 			$randomGif   = $giphyApi->getRandomGif($searchQuery);
 			$keybaseApi->uploadFile($message->getChannel(), $randomGif);
 		}
