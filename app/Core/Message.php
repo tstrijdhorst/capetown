@@ -16,7 +16,7 @@ class Message {
 	 */
 	private $body;
 	/**
-	 * @var DateTime
+	 * @var \DateTime
 	 */
 	private $sent_at;
 	
@@ -35,28 +35,10 @@ class Message {
 	}
 	
 	/**
-	 * @param array $channel
-	 * @return Message
-	 */
-	public function setChannel(array $channel): Message {
-		$this->channel = $channel;
-		return $this;
-	}
-	
-	/**
 	 * @return string
 	 */
 	public function getUsername(): string {
 		return $this->username;
-	}
-	
-	/**
-	 * @param string $username
-	 * @return Message
-	 */
-	public function setUsername(string $username): Message {
-		$this->username = $username;
-		return $this;
 	}
 	
 	/**
@@ -67,27 +49,9 @@ class Message {
 	}
 	
 	/**
-	 * @param string $body
-	 * @return Message
+	 * @return \DateTime
 	 */
-	public function setBody(string $body): Message {
-		$this->body = $body;
-		return $this;
-	}
-	
-	/**
-	 * @return DateTime
-	 */
-	public function getSentAt(): DateTime {
+	public function getSentAt(): \DateTime {
 		return $this->sent_at;
-	}
-	
-	/**
-	 * @param DateTime $sent_at
-	 * @return Message
-	 */
-	public function setSentAt(DateTime $sent_at): Message {
-		$this->sent_at = $sent_at;
-		return $this;
 	}
 }
