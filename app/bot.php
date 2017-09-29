@@ -20,7 +20,6 @@ $loop->addPeriodicTimer(
 			$randomGif   = $giphyApi->getRandomGif($searchQuery);
 			$keybaseApi->uploadFile($message->getChannel(), $randomGif);
 		}
-		var_dump($message);
 	}
 }
 );
