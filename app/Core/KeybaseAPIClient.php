@@ -66,7 +66,9 @@ class KeybaseAPIClient {
 	private function doAPICommand(array $command): array {
 		exec('keybase chat api -m '.escapeshellarg(json_encode($command)), $output);
 		
-		echo 'RAW OUTPUT'.PHP_EOL.$output[0].PHP_EOL.'END RAW OUTPUT';
+		if (\Capetown\VERBOSE) {
+			echo $output[0].PHP_EOL;
+		}
 		
 		$commandOutput = json_decode($output[0], true);
 		return $commandOutput['result'];
