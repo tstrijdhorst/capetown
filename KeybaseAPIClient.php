@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__.'/Message.php';
 
 use React\EventLoop\LoopInterface;
 
@@ -13,6 +14,9 @@ class KeybaseAPIClient {
 		$this->loop = $loop;
 	}
 	
+	/**
+	 * @return Message[]
+	 */
 	public function getUnreadMessages(): array {
 		$channels = $this->getChannelsWithUnreadMessages();
 		
@@ -44,7 +48,10 @@ class KeybaseAPIClient {
 		return $commandOutput['result'];
 	}
 	
-	
+	/**
+	 * @param array $channel
+	 * @return Message[]
+	 */
 	private function getUnreadMessagesFromChannel(array $channel): array {
 		$messagesRaw = $this->getUnreadMessagesFromChannelRaw($channel);
 		
@@ -52,21 +59,19 @@ class KeybaseAPIClient {
 		foreach ($messagesRaw as $messageRaw) {
 			$messageRaw = $messageRaw['msg'];
 			if ($messageRaw['unread'] === true && $messageRaw['content']['type'] === 'text') {
-				$messageStructUnread = [
-					'channel'  => $messageRaw['channel'],
-					'sent_at'  => new \DateTime('@'.$messageRaw['sent_at']),
-					'username' => $messageRaw['sender']['username'],
-					'body'     => $messageRaw['content']['text']['body'],
-				];
-				
-				$messagesUnread[] = $messageStructUnread;
+				$messagesUnread[] = new Message(
+					$messageRaw['channel'],
+					$messageRaw['sender']['username'],
+					$messageRaw['content']['text']['body'],
+					new \DateTime('@'.$messageRaw['sent_at'])
+				);
 			}
 		}
 		
 		return $messagesUnread;
 	}
 	
-	private function getUnreadMessagesFromChannelRaw(array $channel) : array {
+	private function getUnreadMessagesFromChannelRaw(array $channel): array {
 		$readUnreadMessagesCommand = [
 			'method' => 'read',
 			'params' => [
@@ -77,7 +82,7 @@ class KeybaseAPIClient {
 				'peek'        => true,
 			],
 		];
-		
+
 //		$unreadMessagesResult = $this->doAPICommand($readUnreadMessagesCommand);
 		$unreadMessagesResult = json_decode(file_get_contents(__DIR__.'/messages.json'), true)['result'];
 		$messagesRaw          = $unreadMessagesResult['messages'];
@@ -91,9 +96,9 @@ class KeybaseAPIClient {
 		$listCommand = [
 			'method' => 'list',
 		];
-		
+
 //		$listResult       = $this->doAPICommand($listCommand);
-		$listResult = json_decode(file_get_contents(__DIR__.'/listWithUnread.json'),true)['result'];
+		$listResult       = json_decode(file_get_contents(__DIR__.'/listWithUnread.json'), true)['result'];
 		$conversationsRaw = $listResult['conversations'];
 		
 		$channels = [];
