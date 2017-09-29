@@ -5,6 +5,7 @@ namespace Capetown;
 use Capetown\Core\Bootstrap;
 use Capetown\Core\KeybaseAPIClient;
 use Capetown\Plugins\Giphy\GiphyAPIClient;
+use Capetown\Plugins\Giphy\NoSearchResultsFoundException;
 
 require_once __DIR__.'/../vendor/autoload.php';
 
@@ -20,8 +21,14 @@ $loop->addPeriodicTimer(
 	foreach ($keybaseApi->getUnreadMessages() as $message) {
 		if (substr($message->getBody(), 0, 7) === '/giphy ') {
 			$searchQuery = substr($message->getBody(), 7);
-			$randomGif   = $giphyApi->getRandomGif($searchQuery);
-			$keybaseApi->uploadFile($message->getChannel(), $randomGif);
+			
+			try {
+				$randomGif = $giphyApi->getRandomGif($searchQuery);
+				$keybaseApi->uploadFile($message->getChannel(), $randomGif, $searchQuery);
+			}
+			catch (NoSearchResultsFoundException $e) {
+				$keybaseApi->sendMessage($message->getChannel(), $e->getMessage());
+			}
 		}
 	}
 }

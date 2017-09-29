@@ -28,11 +28,35 @@ class KeybaseAPIClient {
 		return $messagesUnread;
 	}
 	
-	public function sendMessage(string $channel, string $message) {
+	public function sendMessage(array $channel, string $body): void {
+		$sendMessageCommand = [
+			'method' => 'send',
+			'params' => [
+				'options' => [
+					'channel' => $channel,
+					'message' => [
+						'body' => $body,
+					],
+				],
+			],
+		];
+		
+		$this->doAPICommand($sendMessageCommand);
 	}
 	
-	public function uploadFile(array $channel, $file) {
-	
+	public function uploadFile(array $channel, \SplFileObject $file, string $title): void {
+		$uploadAttachmentCommand = [
+			'method' => 'attach',
+			'params' => [
+				'options'  => [
+					'channel' => $channel,
+				],
+				'filename' => $file->getPathname(),
+				'title'    => $title,
+			],
+		];
+		
+		$this->doAPICommand($uploadAttachmentCommand);
 	}
 	
 	/**
