@@ -44,15 +44,15 @@ class KeybaseAPIClient {
 		$this->doAPICommand($sendMessageCommand);
 	}
 	
-	public function uploadFile(array $channel, \SplFileObject $file, string $title): void {
+	public function uploadAttachment(array $channel, \SplFileObject $file, string $title): void {
 		$uploadAttachmentCommand = [
 			'method' => 'attach',
 			'params' => [
 				'options'  => [
 					'channel' => $channel,
+					'filename' => $file->getPathname(),
+					'title'    => $title,
 				],
-				'filename' => $file->getPathname(),
-				'title'    => $title,
 			],
 		];
 		
@@ -95,7 +95,7 @@ class KeybaseAPIClient {
 		return $messagesUnread;
 	}
 	
-	private function getUnreadMessagesFromChannelRaw(array $channel): array {
+	private function getUnreadMessagesFromChannelRaw(array $channel, bool $peek = false): array {
 		$readUnreadMessagesCommand = [
 			'method' => 'read',
 			'params' => [
@@ -103,12 +103,12 @@ class KeybaseAPIClient {
 					'channel' => $channel,
 				],
 				'unread_only' => true,
-				'peek'        => true,
+				'peek'        => $peek,
 			],
 		];
 
-//		$unreadMessagesResult = $this->doAPICommand($readUnreadMessagesCommand);
-		$unreadMessagesResult = json_decode(file_get_contents(__DIR__.'/../../temp/messages.json'), true)['result'];
+		$unreadMessagesResult = $this->doAPICommand($readUnreadMessagesCommand);
+//		$unreadMessagesResult = json_decode(file_get_contents(__DIR__.'/../../temp/messages.json'), true)['result'];
 		$messagesRaw          = $unreadMessagesResult['messages'];
 		return $messagesRaw;
 	}
@@ -121,8 +121,8 @@ class KeybaseAPIClient {
 			'method' => 'list',
 		];
 
-//		$listResult       = $this->doAPICommand($listCommand);
-		$listResult       = json_decode(file_get_contents(__DIR__.'/../../temp/listWithUnread.json'), true)['result'];
+		$listResult       = $this->doAPICommand($listCommand);
+//		$listResult       = json_decode(file_get_contents(__DIR__.'/../../temp/listWithUnread.json'), true)['result'];
 		$conversationsRaw = $listResult['conversations'];
 		
 		$channels = [];
