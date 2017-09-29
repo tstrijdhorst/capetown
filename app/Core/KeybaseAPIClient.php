@@ -31,7 +31,7 @@ class KeybaseAPIClient {
 	public function sendMessage(string $channel, string $message) {
 	}
 	
-	public function uploadFile(string $channel, $file) {
+	public function uploadFile(array $channel, $file) {
 	
 	}
 	
