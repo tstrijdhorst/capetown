@@ -2,10 +2,13 @@
 
 namespace Capetown;
 
+use Capetown\Core\Bootstrap;
 use Capetown\Core\KeybaseAPIClient;
 use Capetown\Plugins\Giphy\GiphyAPIClient;
 
 require_once __DIR__.'/../vendor/autoload.php';
+
+Bootstrap::bootstrap();
 
 $loop = \React\EventLoop\Factory::create();
 
