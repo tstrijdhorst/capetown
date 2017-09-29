@@ -28,7 +28,7 @@ class KeybaseAPIClient {
 		foreach ($conversationsRaw as $conversationRaw) {
 			$hasUnreadMessages = $conversationRaw['unread'];
 			if ($hasUnreadMessages) {
-				$messagesUnread = array_merge($messagesUnread, $this->getUnreadMessagesFromChannel($conversationRaw));
+				$messagesUnread = array_merge($messagesUnread, $this->getUnreadMessagesFromChannel($conversationRaw['channel']));
 			}
 		}
 		
@@ -56,20 +56,8 @@ class KeybaseAPIClient {
 	}
 	
 	
-	private function getUnreadMessagesFromChannel(array $conversationRaw): array {
-		$readUnreadMessagesCommand = [
-			'method' => 'read',
-			'params' => [
-				'options'     => [
-					'channel' => $conversationRaw['channel'],
-				],
-				'unread_only' => true,
-				'peek'        => true,
-			],
-		];
-		
-		$unreadMessagesResult = $this->doAPICommand($readUnreadMessagesCommand);
-		$messagesRaw          = $unreadMessagesResult['messages'];
+	private function getUnreadMessagesFromChannel(array $channel): array {
+		$messagesRaw = $this->getUnreadMessagesFromChannelRaw($channel);
 		
 		$messagesUnread = [];
 		foreach ($messagesRaw as $messageRaw) {
@@ -87,5 +75,22 @@ class KeybaseAPIClient {
 		}
 		
 		return $messagesUnread;
+	}
+	
+	private function getUnreadMessagesFromChannelRaw(array $channel) : array {
+		$readUnreadMessagesCommand = [
+			'method' => 'read',
+			'params' => [
+				'options'     => [
+					'channel' => $channel,
+				],
+				'unread_only' => true,
+				'peek'        => true,
+			],
+		];
+		
+		$unreadMessagesResult = $this->doAPICommand($readUnreadMessagesCommand);
+		$messagesRaw          = $unreadMessagesResult['messages'];
+		return $messagesRaw;
 	}
 }
