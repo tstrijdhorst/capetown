@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/Message.php';
+namespace Capetown\Core;
 
 use React\EventLoop\LoopInterface;
 
@@ -84,7 +84,7 @@ class KeybaseAPIClient {
 		];
 
 //		$unreadMessagesResult = $this->doAPICommand($readUnreadMessagesCommand);
-		$unreadMessagesResult = json_decode(file_get_contents(__DIR__.'/messages.json'), true)['result'];
+		$unreadMessagesResult = json_decode(file_get_contents(__DIR__.'/../../temp/messages.json'), true)['result'];
 		$messagesRaw          = $unreadMessagesResult['messages'];
 		return $messagesRaw;
 	}
@@ -98,7 +98,7 @@ class KeybaseAPIClient {
 		];
 
 //		$listResult       = $this->doAPICommand($listCommand);
-		$listResult       = json_decode(file_get_contents(__DIR__.'/listWithUnread.json'), true)['result'];
+		$listResult       = json_decode(file_get_contents(__DIR__.'/../../temp/listWithUnread.json'), true)['result'];
 		$conversationsRaw = $listResult['conversations'];
 		
 		$channels = [];

@@ -1,5 +1,6 @@
 <?php
 
+namespace Capetown\Core;
 
 class Message {
 	/**
