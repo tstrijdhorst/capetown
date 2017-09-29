@@ -11,6 +11,7 @@ class GiphyAPIClient {
 	 * @throws \Exception
 	 */
 	public function getRandomGif($searchQuery): \SplFileObject {
+		//@todo revoke this fucking API key plo before publishing this online :')
 		$searchResultsRaw = json_decode(file_get_contents('https://api.giphy.com/v1/gifs/search?api_key=d2evT7jdFzVkllsBjRZ6yyDLO0nZulNh&q='.urlencode($searchQuery).'&limit=25&offset=0&rating=G&lang=en'), true)['data'];
 		
 		if (count($searchResultsRaw) === 0) {
