@@ -13,23 +13,12 @@ class KeybaseAPIClient {
 		$this->loop = $loop;
 	}
 	
-	/**
-	 * @return array
-	 */
 	public function getUnreadMessages(): array {
-		$listCommand = [
-			'method' => 'list',
-		];
-		
-		$listResult       = $this->doAPICommand($listCommand);
-		$conversationsRaw = $listResult['conversations'];
+		$channels = $this->getChannelsWithUnreadMessages();
 		
 		$messagesUnread = [];
-		foreach ($conversationsRaw as $conversationRaw) {
-			$hasUnreadMessages = $conversationRaw['unread'];
-			if ($hasUnreadMessages) {
-				$messagesUnread = array_merge($messagesUnread, $this->getUnreadMessagesFromChannel($conversationRaw['channel']));
-			}
+		foreach ($channels as $channel) {
+			$messagesUnread = array_merge($messagesUnread, $this->getUnreadMessagesFromChannel($channel));
 		}
 		
 		return $messagesUnread;
@@ -62,7 +51,7 @@ class KeybaseAPIClient {
 		$messagesUnread = [];
 		foreach ($messagesRaw as $messageRaw) {
 			$messageRaw = $messageRaw['msg'];
-			if ($messageRaw['content']['type'] === 'text') {
+			if ($messageRaw['unread'] === true && $messageRaw['content']['type'] === 'text') {
 				$messageStructUnread = [
 					'channel'  => $messageRaw['channel'],
 					'sent_at'  => new \DateTime('@'.$messageRaw['sent_at']),
@@ -89,8 +78,31 @@ class KeybaseAPIClient {
 			],
 		];
 		
-		$unreadMessagesResult = $this->doAPICommand($readUnreadMessagesCommand);
+//		$unreadMessagesResult = $this->doAPICommand($readUnreadMessagesCommand);
+		$unreadMessagesResult = json_decode(file_get_contents(__DIR__.'/messages.json'), true)['result'];
 		$messagesRaw          = $unreadMessagesResult['messages'];
 		return $messagesRaw;
+	}
+	
+	/**
+	 * @return array
+	 */
+	private function getChannelsWithUnreadMessages(): array {
+		$listCommand = [
+			'method' => 'list',
+		];
+		
+//		$listResult       = $this->doAPICommand($listCommand);
+		$listResult = json_decode(file_get_contents(__DIR__.'/listWithUnread.json'),true)['result'];
+		$conversationsRaw = $listResult['conversations'];
+		
+		$channels = [];
+		foreach ($conversationsRaw as $conversationRaw) {
+			$hasUnreadMessages = $conversationRaw['unread'];
+			if ($hasUnreadMessages) {
+				$channels[] = $conversationRaw['channel'];
+			}
+		}
+		return $channels;
 	}
 }
