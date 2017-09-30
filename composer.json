@@ -1,7 +1,8 @@
 {
   "name": "capetown/capetown",
   "homepage": "https://github.com/tstrijdhorst/capetown",
-  "type": "project",
+  "keywords": ["keybase.io", "chatbot"],
+  "type": "framework",
   "license": "MIT",
   "authors": [
     {
