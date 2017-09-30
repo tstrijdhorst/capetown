@@ -3,7 +3,7 @@
 namespace Capetown\Plugins\Giphy;
 
 class GiphyAPIClient {
-	private const TEMPDIR = \Capetown\TEMP_DIR.'/gifs/';
+	private const DOWNLOADDIR = __DIR__.'/temp/gifs/';
 	/**
 	 * @var string
 	 */
@@ -31,11 +31,11 @@ class GiphyAPIClient {
 			throw new \Exception('Could not download gif');
 		}
 		
-		if (file_exists(self::TEMPDIR) === false) {
-			mkdir(self::TEMPDIR);
+		if (file_exists(self::DOWNLOADDIR) === false) {
+			mkdir(self::DOWNLOADDIR);
 		}
 		
-		$filePath = self::TEMPDIR.$randomSearchResultRaw['id'].'.gif';
+		$filePath = self::DOWNLOADDIR.$randomSearchResultRaw['id'].'.gif';
 		file_put_contents($filePath, $randomGif);
 		
 		return $filePath;
