@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "capetown/core",
-            "version": "0.1.4",
+            "version": "0.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tstrijdhorst/capetown-core.git",
-                "reference": "bd34ac912e053e6965206b635ab7a9e662a776e6"
+                "reference": "a016707d52d9c1808338a3d1d991e37cd3cf6318"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tstrijdhorst/capetown-core/zipball/bd34ac912e053e6965206b635ab7a9e662a776e6",
-                "reference": "bd34ac912e053e6965206b635ab7a9e662a776e6",
+                "url": "https://api.github.com/repos/tstrijdhorst/capetown-core/zipball/a016707d52d9c1808338a3d1d991e37cd3cf6318",
+                "reference": "a016707d52d9c1808338a3d1d991e37cd3cf6318",
                 "shasum": ""
             },
             "require": {
@@ -41,7 +41,7 @@
                 }
             ],
             "description": "Capetown Core Library",
-            "time": "2017-09-30 18:30:45"
+            "time": "2017-09-30 20:04:56"
         },
         {
             "name": "react/event-loop",
