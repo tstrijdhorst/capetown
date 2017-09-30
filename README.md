@@ -1,5 +1,7 @@
 # A keybase.io bot framework
 
+**This package is currently in alpha mode. It's fully functional but the API implementation is far from complete. Accepting PRs for further implementation.** 
+
 This is a small framework for writing keybase.io bots in PHP. 
 
 # Usage
