@@ -44,13 +44,13 @@ class KeybaseAPIClient {
 		$this->doAPICommand($sendMessageCommand);
 	}
 	
-	public function uploadAttachment(array $channel, \SplFileObject $file, string $title): void {
+	public function uploadAttachment(array $channel, string $filePath, string $title): void {
 		$uploadAttachmentCommand = [
 			'method' => 'attach',
 			'params' => [
-				'options'  => [
-					'channel' => $channel,
-					'filename' => $file->getPathname(),
+				'options' => [
+					'channel'  => $channel,
+					'filename' => $filePath,
 					'title'    => $title,
 				],
 			],
@@ -108,10 +108,10 @@ class KeybaseAPIClient {
 				'peek'        => $peek,
 			],
 		];
-
-		$unreadMessagesResult = $this->doAPICommand($readUnreadMessagesCommand);
-//		$unreadMessagesResult = json_decode(file_get_contents(__DIR__.'/../../temp/messages.json'), true)['result'];
-		$messagesRaw          = $unreadMessagesResult['messages'];
+		
+//		$unreadMessagesResult = $this->doAPICommand($readUnreadMessagesCommand);
+		$unreadMessagesResult = json_decode(file_get_contents(__DIR__.'/../../temp/messages.json'), true)['result'];
+		$messagesRaw = $unreadMessagesResult['messages'];
 		return $messagesRaw;
 	}
 	
@@ -122,9 +122,9 @@ class KeybaseAPIClient {
 		$listCommand = [
 			'method' => 'list',
 		];
-
-		$listResult       = $this->doAPICommand($listCommand);
-//		$listResult       = json_decode(file_get_contents(__DIR__.'/../../temp/listWithUnread.json'), true)['result'];
+		
+//		$listResult = $this->doAPICommand($listCommand);
+		$listResult       = json_decode(file_get_contents(__DIR__.'/../../temp/listWithUnread.json'), true)['result'];
 		$conversationsRaw = $listResult['conversations'];
 		
 		$channels = [];

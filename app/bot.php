@@ -16,29 +16,23 @@ $loop = \React\EventLoop\Factory::create();
 $keybaseApi = new KeybaseAPIClient($loop);
 $giphyApi   = new GiphyAPIClient();
 
-$isLocked = false;
 $loop->addPeriodicTimer(
-	1, function () use ($keybaseApi, $giphyApi, $isLocked) {
-	if ($isLocked) {
-		return;
-	}
-	
-	$isLocked = true;
-	foreach ($keybaseApi->getUnreadMessages() as $message) {
+	1, function () use ($keybaseApi, $giphyApi) {
+	$messagesUnread = $keybaseApi->getUnreadMessages();
+	foreach ($messagesUnread as $message) {
 		if (substr($message->getBody(), 0, 7) === '/giphy ') {
 			$searchQuery = substr($message->getBody(), 7);
 			
 			try {
-				$randomGif = $giphyApi->getRandomGif($searchQuery);
-				$keybaseApi->uploadAttachment($message->getChannel(), $randomGif, $searchQuery);
+				$randomGifPath = $giphyApi->getRandomGif($searchQuery);
+				$keybaseApi->uploadAttachment($message->getChannel(), $randomGifPath, $searchQuery);
+				unlink($randomGifPath);
 			}
 			catch (NoSearchResultsFoundException $e) {
 				$keybaseApi->sendMessage($message->getChannel(), $e->getMessage());
 			}
 		}
 	}
-	
-	$isLocked = false;
 }
 );
 
