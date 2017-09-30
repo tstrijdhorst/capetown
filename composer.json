@@ -12,7 +12,6 @@
   ],
   "require": {
     "php": ">=7.1.0",
-    "react/event-loop": "^0.4.3",
     "capetown/core":"dev-master",
     "vlucas/phpdotenv": "^2.4"
   },
