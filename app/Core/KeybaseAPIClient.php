@@ -2,8 +2,6 @@
 
 namespace Capetown\Core;
 
-use React\EventLoop\LoopInterface;
-
 class KeybaseAPIClient {
 	/**
 	 * @return Message[]
@@ -100,8 +98,7 @@ class KeybaseAPIClient {
 			],
 		];
 		
-//		$unreadMessagesResult = $this->doAPICommand($readUnreadMessagesCommand);
-		$unreadMessagesResult = json_decode(file_get_contents(__DIR__.'/../../temp/messages.json'), true)['result'];
+		$unreadMessagesResult = $this->doAPICommand($readUnreadMessagesCommand);
 		$messagesRaw = $unreadMessagesResult['messages'];
 		return $messagesRaw;
 	}
@@ -114,8 +111,7 @@ class KeybaseAPIClient {
 			'method' => 'list',
 		];
 		
-//		$listResult = $this->doAPICommand($listCommand);
-		$listResult       = json_decode(file_get_contents(__DIR__.'/../../temp/listWithUnread.json'), true)['result'];
+		$listResult = $this->doAPICommand($listCommand);
 		$conversationsRaw = $listResult['conversations'];
 		
 		$channels = [];
