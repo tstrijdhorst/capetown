@@ -16,5 +16,5 @@ This is where you add the commands you want to enable via composer and run the a
 
 This is all the core code that both the runner and all the command plugins depend on. In this way we ensure that both the runner and all the plugins never depend on eachother and each is free to do what they want as long as you implement the `CommmandInterface`
     
-### Example command plugins
+### Official command plugins
 * [Giphy Command](https://github.com/tstrijdhorst/capetown-giphy)
