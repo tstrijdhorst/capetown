@@ -1,7 +1,7 @@
 {
     "name": "timstrijdhorst/capetown",
     "type": "project",
-    "license": "MIIIINE O_O ok you can use it if you want as long as you say you didn't write it but jesus christ it's a giphy bot for keybase in PHP... I doubt you want to claim this. If you really claim it for yourself I'm probably not going to persue it though so do whatever the fuck you want with it <3",
+    "license": "MIT",
     "authors": [
         {
             "name": "Tim Strijdhorst",
