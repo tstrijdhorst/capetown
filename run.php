@@ -4,6 +4,7 @@ use Capetown\Core\Bot;
 use Capetown\Core\KeybaseAPIClient;
 use Dotenv\Dotenv;
 
+require_once __DIR__.'/EnabledCommands.php';
 require_once __DIR__.'/vendor/autoload.php';
 define('Capetown\VERBOSE', true);
 
@@ -18,5 +19,5 @@ foreach(EnabledCommands::getEnabledCommandClasses() as $commandClass) {
 
 $keybaseApiClient = new KeybaseAPIClient();
 
-$bot = new Bot($keybaseApiClient, $enabledCommandClasses);
+$bot = new Bot($keybaseApiClient, EnabledCommands::getEnabledCommandClasses());
 $bot->run();
