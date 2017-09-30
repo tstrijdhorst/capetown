@@ -7,7 +7,7 @@ use Capetown\Core\Bot;
 use Capetown\Core\KeybaseAPIClient;
 use Capetown\Plugins\Giphy\GiphyCommand;
 
-require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__.'/vendor/autoload.php';
 Bootstrap::bootstrap();
 
 $enabledCommands = [
