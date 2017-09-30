@@ -4,13 +4,21 @@ namespace Capetown\Plugins\Giphy;
 
 class GiphyAPIClient {
 	private const TEMPDIR = \Capetown\TEMP_DIR.'/gifs/';
+	/**
+	 * @var string
+	 */
+	private $apiKey;
+	
+	public function __construct(string $apiKey) {
+		$this->apiKey = $apiKey;
+	}
 	
 	/**
 	 * @throws \Exception
 	 */
 	public function getRandomGif($searchQuery): string {
-		//@todo revoke this fucking API key plo before publishing this online :')
-		$searchResultsRaw = json_decode(file_get_contents('https://api.giphy.com/v1/gifs/search?api_key=d2evT7jdFzVkllsBjRZ6yyDLO0nZulNh&q='.urlencode($searchQuery).'&limit=25&offset=0&rating=G&lang=en'), true)['data'];
+		$searchURL        = 'https://api.giphy.com/v1/gifs/search?api_key='.$this->apiKey.'&q='.urlencode($searchQuery).'&limit=25&offset=0&rating=G&lang=en';
+		$searchResultsRaw = json_decode(file_get_contents($searchURL), true)['data'];
 		
 		if (count($searchResultsRaw) === 0) {
 			throw new NoSearchResultsFoundException($searchQuery);

@@ -14,7 +14,7 @@ Bootstrap::bootstrap();
 $loop = \React\EventLoop\Factory::create();
 
 $keybaseApi = new KeybaseAPIClient($loop);
-$giphyApi   = new GiphyAPIClient();
+$giphyApi   = new GiphyAPIClient(getenv('GIPHY_API_KEY'));
 
 $loop->addPeriodicTimer(
 	1, function () use ($keybaseApi, $giphyApi) {
