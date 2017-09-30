@@ -7,7 +7,7 @@ This is a small framework for writing keybase.io bots in PHP.
 # Usage
 * Install the commands you want with composer
 * Add the FQN of the commandclass to `EnabledCommands.php`
-* Copy the `name.env.dist` file from the plugin to `config/` and fill in the required information
+* **(If Necessary)** Copy the `name.env.dist` file from the plugin to `config/name.env` and fill in the required information
 * Run `app/run.php` and you are good to go!
 
 ## Architecture
