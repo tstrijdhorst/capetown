@@ -24,13 +24,8 @@ class ExampleCommand implements CommandInterface {
 		return 'example';
 	}
 	
-	/**
-	 * @param Message[] $messages
-	 */
-	public function handleMessages(array $messages): void {
-		foreach ($messages as $message) {
-			$responseBody = 'You said this to me: '.$message->getBody();
-			$this->keybaseAPIClient->sendMessage($message->getChannel(), $responseBody);
-		}
+	public function handleMessage(Message $message): void {
+		$responseBody = 'You said this to me: '.$message->getBody();
+		$this->keybaseAPIClient->sendMessage($message->getChannel(), $responseBody);
 	}
 }
