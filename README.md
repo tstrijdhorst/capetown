@@ -11,7 +11,7 @@ This is a small framework for writing keybase.io bots in PHP.
 ## Architecture
 
 ##### Note
-While the author really likes to keep things seperate there is nothing from stopping you to implement your plugin in a different way. As long as you implement the `CommandInterface` and you are able to add the FQN of your command to the `EnabledCommands.php` it will be fine.
+While the author really likes to keep things separate there is nothing from stopping you to implement your plugin in a different way. As long as you implement the `CommandInterface` and you are able to add the FQN of your command to the `EnabledCommands.php` it will be fine.
 
 ### The runner (this)
 This is where you add the commands you want to enable via composer and run the actual bot with.
