@@ -1,6 +1,9 @@
 <?php
 
+namespace Capetown\Runner;
+
 use Capetown\Core\CommandInterface;
+use Capetown\Runner\Commands\ExampleCommand;
 
 class EnabledCommands {
 	/**
@@ -8,7 +11,7 @@ class EnabledCommands {
 	 */
 	public static function getEnabledCommandClasses(): array {
 		return [
-			//Add your Command::class here
+			ExampleCommand::class,
 		];
 	}
 }

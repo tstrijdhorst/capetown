@@ -15,5 +15,10 @@
     "react/event-loop": "^0.4.3",
     "capetown/core":"dev-master",
     "vlucas/phpdotenv": "^2.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Capetown\\Runner\\": "app/"
+    }
   }
 }
