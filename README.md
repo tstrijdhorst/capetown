@@ -1,3 +1,3 @@
-# A giphy bot for keybase.io
+# A keybase.io bot framework
 
-Really yes PHP
+Plugin based. Create your own package for a plugin and install that via composer.
