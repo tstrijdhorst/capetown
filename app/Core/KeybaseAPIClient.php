@@ -6,15 +6,6 @@ use React\EventLoop\LoopInterface;
 
 class KeybaseAPIClient {
 	/**
-	 * @var LoopInterface
-	 */
-	private $loop;
-	
-	public function __construct(LoopInterface $loop) {
-		$this->loop = $loop;
-	}
-	
-	/**
 	 * @return Message[]
 	 */
 	public function getUnreadMessages(): array {
