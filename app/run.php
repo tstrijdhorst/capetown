@@ -9,9 +9,7 @@ use Dotenv\Dotenv;
 
 require_once __DIR__.'/../vendor/autoload.php';
 
-Runner::run();
-
-class Runner {
+(new class  {
 	private const CONFIG_DIR = __DIR__.'/../config';
 	
 	public static function run(): void {
@@ -41,5 +39,5 @@ class Runner {
 	private static function exportCoreConfig(): void {
 		CoreConfig::$verboseMode = boolval(getenv('VERBOSE'));
 	}
-}
+})::run();
 
