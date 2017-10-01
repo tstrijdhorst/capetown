@@ -14,7 +14,7 @@ Runner::run();
 class Runner {
 	private const CONFIG_DIR = __DIR__.'/../config';
 	
-	public static function run() {
+	public static function run(): void {
 		self::importConfiguration();
 		self::exportCoreConfig();
 		
@@ -38,7 +38,7 @@ class Runner {
 		}
 	}
 	
-	private static function exportCoreConfig() {
+	private static function exportCoreConfig(): void {
 		CoreConfig::$verboseMode = boolval(getenv('VERBOSE'));
 	}
 }
