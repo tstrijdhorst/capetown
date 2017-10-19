@@ -12,10 +12,11 @@ class PluginManager {
 		
 		$composerArray['require'] = array_merge($composerArray['require'], $pluginRequirements);
 		
-		file_put_contents(json_encode($composerArray), $composerPath);
+		file_put_contents($composerPath, json_encode($composerArray));
 		
-		exec(getenv('COMPOSER_PATH').' install', $output);
+		$commandString = escapeshellarg(getenv('COMPOSER_PATH')).' install';
+		exec($commandString, $output);
 		
-		file_put_contents($composerFileOriginal, $composerPath);
+		file_put_contents($composerPath, $composerFileOriginal);
 	}
 }
