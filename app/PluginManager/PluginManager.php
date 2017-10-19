@@ -4,9 +4,9 @@ namespace Capetown\Runner\PluginManager;
 
 use Capetown\Runner\Constants;
 
-class ComposerAdapter {
+class PluginManager {
 	public function installPlugins() {
-		$pluginRequirements = json_decode(file_get_contents(Constants::BASEDIR, 'plugins.json'), true);
+		$pluginRequirements = json_decode(file_get_contents(Constants::BASEDIR, 'plugins.json'), true)['require'];
 		
 		$composerPath         = Constants::BASEDIR.'composer.json';
 		$composerFileOriginal = file_get_contents($composerPath);

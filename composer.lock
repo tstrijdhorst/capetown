@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a3ecddff1ada8b4d6e544b41f9d77502",
+    "hash": "a8f12bf40a645d43e57cedff1b36c134",
     "content-hash": "cd6ea1df9ec5a5fbe76382c700664b14",
     "packages": [
         {
             "name": "capetown/core",
-            "version": "0.1.6",
+            "version": "0.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tstrijdhorst/capetown-core.git",
-                "reference": "a016707d52d9c1808338a3d1d991e37cd3cf6318"
+                "reference": "6757b2f5b89ce0e437def07fa8e509cb40112daa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tstrijdhorst/capetown-core/zipball/a016707d52d9c1808338a3d1d991e37cd3cf6318",
-                "reference": "a016707d52d9c1808338a3d1d991e37cd3cf6318",
+                "url": "https://api.github.com/repos/tstrijdhorst/capetown-core/zipball/6757b2f5b89ce0e437def07fa8e509cb40112daa",
+                "reference": "6757b2f5b89ce0e437def07fa8e509cb40112daa",
                 "shasum": ""
             },
             "require": {
@@ -41,7 +41,7 @@
                 }
             ],
             "description": "Capetown Core Library",
-            "time": "2017-09-30 20:04:56"
+            "time": "2017-10-13 11:03:16"
         },
         {
             "name": "react/event-loop",
