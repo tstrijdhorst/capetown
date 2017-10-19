@@ -20,7 +20,7 @@ class PluginManager {
 			throw $e;
 		}
 		finally {
-			file_put_contents($composerFileOriginal, $composerFileOriginal);
+			file_put_contents($composerPath, $composerFileOriginal);
 		}
 	}
 	

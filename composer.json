@@ -1,1 +1,24 @@
-{"name":"capetown\/capetown","homepage":"https:\/\/github.com\/tstrijdhorst\/capetown","description":"Keybase.io Bot Framework in PHP","keywords":["keybase.io","chatbot"],"type":"framework","license":"MIT","authors":[{"name":"Tim Strijdhorst","email":"tim@decorrespondent.nl"}],"require":{"php":">=7.1.0","capetown\/core":"^0.1","vlucas\/phpdotenv":"^2.4","capetown\/giphy-command":"^1.0"},"autoload":{"psr-4":{"Capetown\\Runner\\":"app\/"}}}
+{
+  "name": "capetown/capetown",
+  "homepage": "https://github.com/tstrijdhorst/capetown",
+  "description": "Keybase.io Bot Framework in PHP",
+  "keywords": ["keybase.io", "chatbot"],
+  "type": "framework",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Tim Strijdhorst",
+      "email": "tim@decorrespondent.nl"
+    }
+  ],
+  "require": {
+    "php": ">=7.1.0",
+    "capetown/core":"^0.1",
+    "vlucas/phpdotenv": "^2.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Capetown\\Runner\\": "app/"
+    }
+  }
+}
