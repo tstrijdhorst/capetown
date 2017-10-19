@@ -12,11 +12,29 @@ class PluginManager {
 		
 		$composerArray['require'] = array_merge($composerArray['require'], $pluginRequirements);
 		
-		file_put_contents($composerPath, json_encode($composerArray));
+		try {
+			file_put_contents($composerPath, json_encode($composerArray));
+			$this->composerUpdate($pluginRequirements);
+		}
+		catch(\Throwable $e) {
+			throw $e;
+		}
+		finally {
+			file_put_contents($composerFileOriginal, $composerFileOriginal);
+		}
+	}
+	
+	/**
+	 * @param array $pluginRequirements
+	 */
+	private function composerUpdate(array $pluginRequirements): void {
+		$commandString = getenv('COMPOSER_PATH').' update';
 		
-		$commandString = escapeshellarg(getenv('COMPOSER_PATH')).' install';
+		$packageNames = array_keys($pluginRequirements);
+		foreach ($packageNames as $packageName) {
+			$commandString .= ' '.escapeshellarg($packageName);
+		}
+		
 		exec($commandString, $output);
-		
-		file_put_contents($composerPath, $composerFileOriginal);
 	}
 }
