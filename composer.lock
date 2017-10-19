@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a8f12bf40a645d43e57cedff1b36c134",
-    "content-hash": "cd6ea1df9ec5a5fbe76382c700664b14",
+    "hash": "c633de8cb9abd7d139ac97ca0a2669ee",
+    "content-hash": "a5dce2673949fc571c45c4c9db791e8c",
     "packages": [
         {
             "name": "capetown/core",
@@ -42,6 +42,44 @@
             ],
             "description": "Capetown Core Library",
             "time": "2017-10-13 11:03:16"
+        },
+        {
+            "name": "capetown/giphy-command",
+            "version": "1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tstrijdhorst/capetown-giphy.git",
+                "reference": "418eb634202923ddfe1174b1ccc5cd695f018d1b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tstrijdhorst/capetown-giphy/zipball/418eb634202923ddfe1174b1ccc5cd695f018d1b",
+                "reference": "418eb634202923ddfe1174b1ccc5cd695f018d1b",
+                "shasum": ""
+            },
+            "require": {
+                "capetown/core": "^0.1",
+                "php": ">=7.1.0"
+            },
+            "type": "plugin",
+            "autoload": {
+                "psr-4": {
+                    "Capetown\\Commands\\Giphy\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tim Strijdhorst",
+                    "email": "tim@decorrespondent.nl"
+                }
+            ],
+            "description": "Giphy Command for Capetown Keybase.io Bot Framework",
+            "homepage": "https://github.com/tstrijdhorst/capetown-giphy",
+            "time": "2017-10-13 11:23:53"
         },
         {
             "name": "react/event-loop",
