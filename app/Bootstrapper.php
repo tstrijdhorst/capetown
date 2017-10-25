@@ -5,6 +5,8 @@ namespace Capetown\Runner;
 use Capetown\Core\CoreConfig;
 use Dotenv\Dotenv;
 
+require_once __DIR__.'/../vendor/autoload.php';
+
 class Bootstrapper {
 	public static function bootstrap() {
 		self::importConfiguration();
