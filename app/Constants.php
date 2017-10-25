@@ -3,6 +3,7 @@
 namespace Capetown\Runner;
 
 class Constants {
-	const BASEDIR = __DIR__.'/../';
-	const CONFIGDIR = Constants::BASEDIR.'config';
+	const BASEDIR   = __DIR__.'/../';
+	const APPDIR    = self::BASEDIR.'app';
+	const CONFIGDIR = self::BASEDIR.'config';
 }
