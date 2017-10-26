@@ -70,6 +70,7 @@ class PluginManager {
 	
 	/**
 	 * Remove all commands that used to be loaded but are not anymore
+	 *
 	 * @param array $enabledCommandsFQNSPre
 	 * @return array
 	 */
@@ -86,34 +87,50 @@ class PluginManager {
 	private function getNewlyInstalledCommandFQNS(array $pluginRequirements): array {
 		$commandFQNS = [];
 		foreach ($pluginRequirements as $pluginRequirement) {
-			$pluginName          = $pluginRequirement[0];
-			$pluginDirectoryPath = Constants::BASEDIR.'vendor/'.$pluginName;
-			
-			$phpFilePaths   = [];
-			$directoryPaths = [$pluginDirectoryPath];
-			do {
-				$files = scandir(array_pop($directoryPaths));
-				
-				foreach ($files as $file) {
-					if (is_dir($file)) {
-						$directoryPaths[] = realpath($file);
-						continue;
-					}
-					
-					if (substr($file, -4) === '.php') {
-						$phpFilePaths[] = realpath($file);
-					}
-				}
-			} while (count($directoryPaths) > 1);
-			
-			foreach ($phpFilePaths as $phpFilePath) {
-				//@todo convert this to php 7.2 syntax
-				if ($this->staticCodeAnalyzer->implementsCommandInterface($phpFilePath)) {
-					$commandFQNS = $this->staticCodeAnalyzer->getFQN($phpFilePath);
-				}
-			}
+			$pluginName  = $pluginRequirement[0];
+			$commandFQNS = array_merge($commandFQNS, $this->getCommandClassesFQNsFromPlugin($pluginName));
 		}
 		
 		return $commandFQNS;
+	}
+	
+	/**
+	 * @param $pluginName
+	 * @return string
+	 */
+	private function getCommandClassesFQNsFromPlugin($pluginName): string {
+		$pluginDirectoryPath = Constants::BASEDIR.'vendor/'.$pluginName;
+		
+		$commandFQNS  = [];
+		$phpFilePaths = $this->getPHPFilePaths($pluginDirectoryPath);
+		
+		foreach ($phpFilePaths as $phpFilePath) {
+			//@todo convert this to php 7.2 syntax
+			if ($this->staticCodeAnalyzer->implementsCommandInterface($phpFilePath)) {
+				$commandFQNS = $this->staticCodeAnalyzer->getFQN($phpFilePath);
+			}
+		}
+		return $commandFQNS;
+	}
+	
+	private function getPHPFilePaths($pluginDirectoryPath): array {
+		$phpFilePaths   = [];
+		$directoryPaths = [$pluginDirectoryPath];
+		do {
+			$files = scandir(array_pop($directoryPaths));
+			
+			foreach ($files as $file) {
+				if (is_dir($file)) {
+					$directoryPaths[] = realpath($file);
+					continue;
+				}
+				
+				if (substr($file, -4) === '.php') {
+					$phpFilePaths[] = realpath($file);
+				}
+			}
+		} while (count($directoryPaths) > 1);
+		
+		return $phpFilePaths;
 	}
 }
