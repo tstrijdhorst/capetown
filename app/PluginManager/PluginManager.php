@@ -167,7 +167,16 @@ class PluginManager {
 			//Get a list of all implemented interfaces
 			if (is_array($tokens[$i]) && $tokens[$i][0] === T_IMPLEMENTS) {
 				while ($tokens[++$i] !== '{') {
-					if (is_array($tokens[$i]) && $tokens[$i][0] === T_STRING) {
+					if (is_array($tokens[$i]) && $tokens[$i][0] === T_NS_SEPARATOR) {
+						$interfaceName = '';
+						while($tokens[++$i] !== ',') {
+							$interfaceName .= $tokens[$i][1];
+						}
+						$interfaces[] = $interfaceName;
+						continue;
+					}
+					
+					if (is_array($tokens[$i]) && in_array($tokens[$i][0], [T_STRING, T_NS_SEPARATOR])) {
 						$interfaces[] = $tokens[$i][1];
 					}
 				}
