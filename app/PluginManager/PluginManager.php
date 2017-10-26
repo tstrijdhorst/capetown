@@ -8,6 +8,7 @@ class PluginManager {
 	private const ENABLED_COMMANDS_PATH = Constants::CONFIGDIR.'enabledCommands.json';
 	private const COMPOSER_PATH         = Constants::BASEDIR.'composer.json';
 	private const PLUGIN_PATH           = Constants::BASEDIR.'plugins.json';
+	private const VENDOR_PATH           = Constants::BASEDIR.'vendor/';
 	
 	/** @var StaticCodeAnalyzer */
 	private $staticCodeAnalyzer;
@@ -109,20 +110,14 @@ class PluginManager {
 		return $commandFQNs;
 	}
 	
-	/**
-	 * @param $pluginName
-	 * @return string
-	 */
-	private function getCommandClassesFQNsFromPlugin($pluginName): string {
-		$pluginDirectoryPath = Constants::BASEDIR.'vendor/'.$pluginName.'/';
+	private function getCommandClassesFQNsFromPlugin($pluginName): array {
+		$pluginDirectoryPath = self::VENDOR_PATH.$pluginName.'/';
 		
 		$commandFQNs  = [];
-		$phpFilePaths = $this->getPHPFilePaths($pluginDirectoryPath);
-		
-		foreach ($phpFilePaths as $phpFilePath) {
+		foreach ($this->getPHPFilePaths($pluginDirectoryPath) as $phpFilePath) {
 			//@todo convert this to php 7.2 syntax
 			if ($this->staticCodeAnalyzer->implementsCommandInterface($phpFilePath)) {
-				$commandFQNs = $this->staticCodeAnalyzer->getFQN($phpFilePath);
+				$commandFQNs[] = $this->staticCodeAnalyzer->getFQN($phpFilePath);
 			}
 		}
 		return $commandFQNs;
@@ -132,16 +127,18 @@ class PluginManager {
 		$phpFilePaths   = [];
 		$directoryPaths = [$pluginDirectoryPath];
 		do {
-			$fileNames = scandir(array_pop($directoryPaths));
+			$directoryPath = array_pop($directoryPaths);
+			$fileNames     = scandir($directoryPath);
 			
 			foreach ($fileNames as $fileName) {
-				if (is_dir($fileName) && $fileName !== '.' && $fileName !== '..') {
-					$directoryPaths[] = realpath($fileName);
+				$filePath = $directoryPath.$fileName;
+				if (is_dir($filePath) && $fileName !== '.' && $fileName !== '..') {
+					$directoryPaths[] = $filePath.'/';
 					continue;
 				}
 				
 				if (substr($fileName, -4) === '.php') {
-					$phpFilePaths[] = realpath($fileName);
+					$phpFilePaths[] = $filePath;
 				}
 			}
 		} while (count($directoryPaths) > 0);
@@ -149,13 +146,13 @@ class PluginManager {
 		return $phpFilePaths;
 	}
 	
-	private function copyPluginConfigFiles(array $pluginRequirements):void {
+	private function copyPluginConfigFiles(array $pluginRequirements): void {
 		foreach ($pluginRequirements as $pluginRequirement) {
 			$pluginName = $pluginRequirement[0];
 			
-			$pluginConfigPath = Constants::BASEDIR.'vendor/'.$pluginName.'/.env';
+			$pluginConfigPath = self::VENDOR_PATH.$pluginName.'/.env';
 			if (file_exists($pluginConfigPath)) {
-				$configFileName = str_replace('/','_', $pluginName).'.env';
+				$configFileName = str_replace('/', '_', $pluginName).'.env';
 				copy($pluginConfigPath, Constants::CONFIGDIR.$configFileName);
 			}
 		}
