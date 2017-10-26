@@ -40,10 +40,16 @@ class PluginManager {
 	}
 	
 	/**
-	 * @return mixed
+	 * @throws \Exception
+	 * @return array
 	 */
-	private function getPluginRequirements(): mixed {
-		$pluginFile         = json_decode(file_get_contents(self::PLUGIN_PATH), true);
+	private function getPluginRequirements(): array {
+		$pluginFile = json_decode(file_get_contents(self::PLUGIN_PATH), true);
+		
+		if ($pluginFile === null) {
+			throw new \Exception('Could not read plugins file');
+		}
+		
 		$pluginRequirements = $pluginFile['require'];
 		return $pluginRequirements;
 	}
