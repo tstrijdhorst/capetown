@@ -66,23 +66,23 @@ class PluginManager {
 	}
 	
 	private function refreshEnabledCommandsConfig(array $pluginRequirements): void {
-		$enabledCommandsFQNSPre = json_decode(file_get_contents(self::ENABLED_COMMANDS_PATH), true);
+		$enabledCommandsFQNsPre = json_decode(file_get_contents(self::ENABLED_COMMANDS_PATH), true);
 		
-		$enabledCommandsFQNSPost = $this->getLoadedClassesThatStillExist($enabledCommandsFQNSPre);
-		$enabledCommandsFQNSPost = array_merge($enabledCommandsFQNSPost, $this->getNewlyInstalledCommandFQNS($pluginRequirements));
+		$enabledCommandsFQNsPost = $this->getLoadedClassesThatStillExist($enabledCommandsFQNsPre);
+		$enabledCommandsFQNsPost = array_merge($enabledCommandsFQNsPost, $this->getNewlyInstalledCommandFQNs($pluginRequirements));
 		
-		file_put_contents(self::ENABLED_COMMANDS_PATH, json_encode($enabledCommandsFQNSPost));
+		file_put_contents(self::ENABLED_COMMANDS_PATH, json_encode($enabledCommandsFQNsPost));
 	}
 	
 	/**
 	 * Remove all commands that used to be loaded but are not anymore
 	 *
-	 * @param array $enabledCommandsFQNSPre
+	 * @param array $enabledCommandsFQNsPre
 	 * @return array
 	 */
-	private function getLoadedClassesThatStillExist(array $enabledCommandsFQNSPre): array {
+	private function getLoadedClassesThatStillExist(array $enabledCommandsFQNsPre): array {
 		$enabledCommandsFQNs = [];
-		foreach ($enabledCommandsFQNSPre as $enabledCommandFQN) {
+		foreach ($enabledCommandsFQNsPre as $enabledCommandFQN) {
 			if (class_exists($enabledCommandFQN)) {
 				$enabledCommandsFQNs[] = $enabledCommandFQN;
 			}
@@ -90,14 +90,14 @@ class PluginManager {
 		return $enabledCommandsFQNs;
 	}
 	
-	private function getNewlyInstalledCommandFQNS(array $pluginRequirements): array {
-		$commandFQNS = [];
+	private function getNewlyInstalledCommandFQNs(array $pluginRequirements): array {
+		$commandFQNs = [];
 		foreach ($pluginRequirements as $pluginRequirement) {
 			$pluginName  = $pluginRequirement[0];
-			$commandFQNS = array_merge($commandFQNS, $this->getCommandClassesFQNsFromPlugin($pluginName));
+			$commandFQNs = array_merge($commandFQNs, $this->getCommandClassesFQNsFromPlugin($pluginName));
 		}
 		
-		return $commandFQNS;
+		return $commandFQNs;
 	}
 	
 	/**
@@ -107,16 +107,16 @@ class PluginManager {
 	private function getCommandClassesFQNsFromPlugin($pluginName): string {
 		$pluginDirectoryPath = Constants::BASEDIR.'vendor/'.$pluginName.'/';
 		
-		$commandFQNS  = [];
+		$commandFQNs  = [];
 		$phpFilePaths = $this->getPHPFilePaths($pluginDirectoryPath);
 		
 		foreach ($phpFilePaths as $phpFilePath) {
 			//@todo convert this to php 7.2 syntax
 			if ($this->staticCodeAnalyzer->implementsCommandInterface($phpFilePath)) {
-				$commandFQNS = $this->staticCodeAnalyzer->getFQN($phpFilePath);
+				$commandFQNs = $this->staticCodeAnalyzer->getFQN($phpFilePath);
 			}
 		}
-		return $commandFQNS;
+		return $commandFQNs;
 	}
 	
 	private function getPHPFilePaths($pluginDirectoryPath): array {
