@@ -5,9 +5,9 @@ namespace Capetown\Runner\PluginManager;
 use Capetown\Runner\Constants;
 
 class PluginManager {
-	const ENABLED_COMMANDS_PATH = Constants::CONFIGDIR.'enabledCommmands.json';
-	const COMPOSER_PATH         = Constants::BASEDIR.'composer.json';
-	const PLUGIN_PATH           = Constants::BASEDIR.'plugins.json';
+	private const ENABLED_COMMANDS_PATH = Constants::CONFIGDIR.'enabledCommmands.json';
+	private const COMPOSER_PATH         = Constants::BASEDIR.'composer.json';
+	private const PLUGIN_PATH           = Constants::BASEDIR.'plugins.json';
 	
 	/** @var StaticCodeAnalyzer */
 	private $staticCodeAnalyzer;
