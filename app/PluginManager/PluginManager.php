@@ -7,6 +7,7 @@ use Capetown\Runner\Constants;
 class PluginManager {
 	private const ENABLED_COMMANDS_PATH = Constants::CONFIGDIR.'enabledCommands.json';
 	private const COMPOSER_PATH         = Constants::BASEDIR.'composer.json';
+	private const COMPOSER_LOCK_PATH    = Constants::BASEDIR.'composer.lock';
 	private const PLUGIN_PATH           = Constants::BASEDIR.'plugins.json';
 	private const VENDOR_PATH           = Constants::BASEDIR.'vendor/';
 	
@@ -20,8 +21,9 @@ class PluginManager {
 	public function installPlugins(): void {
 		$pluginRequirements = $this->getPluginRequirements();
 		
-		$composerFileOriginal = file_get_contents(self::COMPOSER_PATH);
-		$composerArray        = json_decode($composerFileOriginal, true);
+		$composerLockFileOriginal = file_get_contents(self::COMPOSER_LOCK_PATH);
+		$composerFileOriginal     = file_get_contents(self::COMPOSER_PATH);
+		$composerArray            = json_decode($composerFileOriginal, true);
 		
 		if ($composerArray === null) {
 			throw new \Exception('Could not read composer file');
@@ -34,6 +36,8 @@ class PluginManager {
 			$this->composerUpdate($pluginRequirements);
 			$this->refreshEnabledCommandsConfig($pluginRequirements);
 			$this->copyPluginConfigFiles($pluginRequirements);
+			//@todo read the diff of the composer lock, add that to our own plugin.lock
+			
 			//@todo refactor this in run.php and just include all .env files in {BASEDIR}/config
 		}
 		catch (\Throwable $e) {
@@ -41,6 +45,7 @@ class PluginManager {
 		}
 		finally {
 			file_put_contents(self::COMPOSER_PATH, $composerFileOriginal);
+			file_put_contents(self::COMPOSER_LOCK_PATH, $composerLockFileOriginal);
 		}
 	}
 	
