@@ -14,12 +14,12 @@ class Bootstrapper {
 	}
 	
 	private static function importConfiguration(): void {
-		$fileNames = scandir(Constants::CONFIGDIR);
+		$fileNames = scandir(Constants::CONFIG_DIR);
 		
 		foreach ($fileNames as $fileName) {
-			$filePath = Constants::CONFIGDIR.$fileName;
+			$filePath = Constants::CONFIG_DIR.$fileName;
 			if (is_file($filePath) && substr($filePath, -4) === '.env') {
-				$dotEnv = new Dotenv(Constants::CONFIGDIR, $fileName);
+				$dotEnv = new Dotenv(Constants::CONFIG_DIR, $fileName);
 				$dotEnv->load();
 			}
 		}

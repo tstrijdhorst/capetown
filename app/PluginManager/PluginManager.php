@@ -3,13 +3,13 @@
 namespace Capetown\Runner\PluginManager;
 
 use Capetown\Runner\Constants;
+use Capetown\Runner\EnabledCommands;
 
 class PluginManager {
-	private const ENABLED_COMMANDS_PATH = Constants::CONFIGDIR.'enabledCommands.json';
-	private const COMPOSER_PATH         = Constants::BASEDIR.'composer.json';
-	private const COMPOSER_LOCK_PATH    = Constants::BASEDIR.'composer.lock';
-	private const PLUGIN_PATH           = Constants::BASEDIR.'plugins.json';
-	private const VENDOR_PATH           = Constants::BASEDIR.'vendor/';
+	private const COMPOSER_PATH         = Constants::BASE_DIR.'composer.json';
+	private const COMPOSER_LOCK_PATH    = Constants::BASE_DIR.'composer.lock';
+	private const PLUGIN_PATH           = Constants::BASE_DIR.'plugins.json';
+	private const VENDOR_PATH           = Constants::BASE_DIR.'vendor/';
 	
 	/** @var StaticCodeAnalyzer */
 	private $staticCodeAnalyzer;
@@ -75,13 +75,13 @@ class PluginManager {
 	}
 	
 	private function refreshEnabledCommandsConfig(array $pluginRequirements): void {
-		$enabledCommandsFQNsPre = $this->getEnabledCommands();
+		$enabledCommandsFQNsPre = EnabledCommands::getEnabledCommandClasses();
 		
 		//@todo does this actually work since classes might already be in memory?
 		$enabledCommandsFQNsPost = $this->filterDeletedCommands($enabledCommandsFQNsPre);
 		$enabledCommandsFQNsPost = array_merge($enabledCommandsFQNsPost, $this->getNewlyInstalledCommandFQNs($pluginRequirements));
 		
-		file_put_contents(self::ENABLED_COMMANDS_PATH, json_encode($enabledCommandsFQNsPost));
+		file_put_contents(Constants::ENABLED_COMMANDS_PATH, json_encode($enabledCommandsFQNsPost));
 	}
 	
 	/**
@@ -153,25 +153,8 @@ class PluginManager {
 			$pluginConfigPath = self::VENDOR_PATH.$pluginName.'/.env.dist';
 			if (file_exists($pluginConfigPath)) {
 				$configFileName = str_replace('/', '_', $pluginName).'.env';
-				copy($pluginConfigPath, Constants::CONFIGDIR.$configFileName);
+				copy($pluginConfigPath, Constants::CONFIG_DIR.$configFileName);
 			}
 		}
-	}
-	
-	/**
-	 * @return mixed
-	 * @throws \Exception
-	 */
-	private function getEnabledCommands(): array {
-		if (!is_file(self::ENABLED_COMMANDS_PATH)) {
-			return [];
-		}
-		
-		$enabledCommandsFQNsPre = json_decode(file_get_contents(self::ENABLED_COMMANDS_PATH), true);
-		
-		if ($enabledCommandsFQNsPre === null) {
-			throw new \Exception('Could not read enabled commands config file');
-		}
-		return $enabledCommandsFQNsPre;
 	}
 }
