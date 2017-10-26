@@ -143,9 +143,8 @@ class PluginManager {
 	}
 	
 	private function copyPluginConfigFiles(array $pluginRequirements): void {
-		foreach ($pluginRequirements as $pluginRequirement) {
-			$pluginName = $pluginRequirement[0];
-			
+		$pluginNames = array_keys($pluginRequirements);
+		foreach ($pluginNames as $pluginName) {
 			$pluginConfigPath = self::VENDOR_PATH.$pluginName.'/.env.dist';
 			if (file_exists($pluginConfigPath)) {
 				$configFileName = str_replace('/', '_', $pluginName).'.env';
@@ -158,7 +157,7 @@ class PluginManager {
 	 * @return mixed
 	 * @throws \Exception
 	 */
-	private function getEnabledCommands(): mixed {
+	private function getEnabledCommands(): array {
 		if (!is_file(self::ENABLED_COMMANDS_PATH)) {
 			return [];
 		}
