@@ -33,11 +33,11 @@ class PluginManager {
 		
 		try {
 			file_put_contents(self::COMPOSER_PATH, json_encode($composerArray));
+			//@todo add entries from our plugin.lock to composer.lock
 			$this->composerUpdate($pluginRequirements);
 			$this->refreshEnabledCommandsConfig($pluginRequirements);
 			$this->copyPluginConfigFiles($pluginRequirements);
 			//@todo read the diff of the composer lock, add that to our own plugin.lock
-			
 			//@todo refactor this in run.php and just include all .env files in {BASEDIR}/config
 		}
 		catch (\Throwable $e) {
