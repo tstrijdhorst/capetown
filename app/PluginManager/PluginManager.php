@@ -71,11 +71,7 @@ class PluginManager {
 	}
 	
 	private function refreshEnabledCommandsConfig(array $pluginRequirements): void {
-		$enabledCommandsFQNsPre = json_decode(file_get_contents(self::ENABLED_COMMANDS_PATH), true);
-		
-		if ($enabledCommandsFQNsPre === null) {
-			throw new \Exception('Could not read enabled commands config file');
-		}
+		$enabledCommandsFQNsPre = $this->getEnabledCommands();
 		
 		$enabledCommandsFQNsPost = $this->getLoadedClassesThatStillExist($enabledCommandsFQNsPre);
 		$enabledCommandsFQNsPost = array_merge($enabledCommandsFQNsPost, $this->getNewlyInstalledCommandFQNs($pluginRequirements));
@@ -113,7 +109,7 @@ class PluginManager {
 	private function getCommandClassesFQNsFromPlugin($pluginName): array {
 		$pluginDirectoryPath = self::VENDOR_PATH.$pluginName.'/';
 		
-		$commandFQNs  = [];
+		$commandFQNs = [];
 		foreach ($this->getPHPFilePaths($pluginDirectoryPath) as $phpFilePath) {
 			//@todo convert this to php 7.2 syntax
 			if ($this->staticCodeAnalyzer->implementsCommandInterface($phpFilePath)) {
@@ -156,5 +152,22 @@ class PluginManager {
 				copy($pluginConfigPath, Constants::CONFIGDIR.$configFileName);
 			}
 		}
+	}
+	
+	/**
+	 * @return mixed
+	 * @throws \Exception
+	 */
+	private function getEnabledCommands(): mixed {
+		if (!is_file(self::ENABLED_COMMANDS_PATH)) {
+			return [];
+		}
+		
+		$enabledCommandsFQNsPre = json_decode(file_get_contents(self::ENABLED_COMMANDS_PATH), true);
+		
+		if ($enabledCommandsFQNsPre === null) {
+			throw new \Exception('Could not read enabled commands config file');
+		}
+		return $enabledCommandsFQNsPre;
 	}
 }
