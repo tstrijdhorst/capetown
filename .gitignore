@@ -9,5 +9,5 @@ composer.phar
 
 /temp/
 /plugins.json
-/config/.env
+/config/*.env
 /config/enabledCommands.json
