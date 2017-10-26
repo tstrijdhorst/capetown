@@ -7,6 +7,7 @@ composer.phar
 # You may choose to ignore a library lock file http://getcomposer.org/doc/02-libraries.md#lock-file
 # composer.lock
 
-temp/
-.env
-plugins.json
+/temp/
+/plugins.json
+/config/.env
+/config/enabledCommands.json

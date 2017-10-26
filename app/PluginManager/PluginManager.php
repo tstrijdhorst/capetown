@@ -100,8 +100,9 @@ class PluginManager {
 	
 	private function getNewlyInstalledCommandFQNs(array $pluginRequirements): array {
 		$commandFQNs = [];
-		foreach ($pluginRequirements as $pluginRequirement) {
-			$pluginName  = $pluginRequirement[0];
+		
+		$pluginNames = array_keys($pluginRequirements);
+		foreach ($pluginNames as $pluginName) {
 			$commandFQNs = array_merge($commandFQNs, $this->getCommandClassesFQNsFromPlugin($pluginName));
 		}
 		
@@ -131,19 +132,19 @@ class PluginManager {
 		$phpFilePaths   = [];
 		$directoryPaths = [$pluginDirectoryPath];
 		do {
-			$files = scandir(array_pop($directoryPaths));
+			$fileNames = scandir(array_pop($directoryPaths));
 			
-			foreach ($files as $file) {
-				if (is_dir($file)) {
-					$directoryPaths[] = realpath($file);
+			foreach ($fileNames as $fileName) {
+				if (is_dir($fileName) && $fileName !== '.' && $fileName !== '..') {
+					$directoryPaths[] = realpath($fileName);
 					continue;
 				}
 				
-				if (substr($file, -4) === '.php') {
-					$phpFilePaths[] = realpath($file);
+				if (substr($fileName, -4) === '.php') {
+					$phpFilePaths[] = realpath($fileName);
 				}
 			}
-		} while (count($directoryPaths) > 1);
+		} while (count($directoryPaths) > 0);
 		
 		return $phpFilePaths;
 	}
