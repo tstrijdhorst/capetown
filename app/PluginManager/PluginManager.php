@@ -146,7 +146,7 @@ class PluginManager {
 		foreach ($pluginRequirements as $pluginRequirement) {
 			$pluginName = $pluginRequirement[0];
 			
-			$pluginConfigPath = self::VENDOR_PATH.$pluginName.'/.env';
+			$pluginConfigPath = self::VENDOR_PATH.$pluginName.'/.env.dist';
 			if (file_exists($pluginConfigPath)) {
 				$configFileName = str_replace('/', '_', $pluginName).'.env';
 				copy($pluginConfigPath, Constants::CONFIGDIR.$configFileName);
