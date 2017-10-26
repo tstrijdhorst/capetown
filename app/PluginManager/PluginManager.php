@@ -22,6 +22,10 @@ class PluginManager {
 		$composerFileOriginal = file_get_contents(self::COMPOSER_PATH);
 		$composerArray        = json_decode($composerFileOriginal, true);
 		
+		if ($composerArray === null) {
+			throw new \Exception('Could not read composer file');
+		}
+		
 		$composerArray['require'] = array_merge($composerArray['require'], $pluginRequirements);
 		
 		try {
@@ -67,6 +71,10 @@ class PluginManager {
 	
 	private function refreshEnabledCommandsConfig(array $pluginRequirements): void {
 		$enabledCommandsFQNsPre = json_decode(file_get_contents(self::ENABLED_COMMANDS_PATH), true);
+		
+		if ($enabledCommandsFQNsPre === null) {
+			throw new \Exception('Could not read enabled commands config file');
+		}
 		
 		$enabledCommandsFQNsPost = $this->getLoadedClassesThatStillExist($enabledCommandsFQNsPre);
 		$enabledCommandsFQNsPost = array_merge($enabledCommandsFQNsPost, $this->getNewlyInstalledCommandFQNs($pluginRequirements));
