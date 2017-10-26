@@ -6,10 +6,10 @@ use Capetown\Runner\Constants;
 use Capetown\Runner\EnabledCommands;
 
 class PluginManager {
-	private const COMPOSER_PATH         = Constants::BASE_DIR.'composer.json';
-	private const COMPOSER_LOCK_PATH    = Constants::BASE_DIR.'composer.lock';
-	private const PLUGIN_PATH           = Constants::BASE_DIR.'plugins.json';
-	private const VENDOR_PATH           = Constants::BASE_DIR.'vendor/';
+	private const COMPOSER_PATH      = Constants::BASE_DIR.'composer.json';
+	private const COMPOSER_LOCK_PATH = Constants::BASE_DIR.'composer.lock';
+	private const PLUGIN_PATH        = Constants::BASE_DIR.'plugins.json';
+	private const VENDOR_PATH        = Constants::BASE_DIR.'vendor/';
 	
 	/** @var StaticCodeAnalyzer */
 	private $staticCodeAnalyzer;
@@ -77,27 +77,16 @@ class PluginManager {
 	private function refreshEnabledCommandsConfig(array $pluginRequirements): void {
 		$enabledCommandsFQNsPre = EnabledCommands::getEnabledCommandClasses();
 		
-		//@todo does this actually work since classes might already be in memory?
-		$enabledCommandsFQNsPost = $this->filterDeletedCommands($enabledCommandsFQNsPre);
-		$enabledCommandsFQNsPost = array_merge($enabledCommandsFQNsPost, $this->getNewlyInstalledCommandFQNs($pluginRequirements));
+		$newCommandFQNs = $this->getNewlyInstalledCommandFQNs($pluginRequirements);
 		
-		file_put_contents(Constants::ENABLED_COMMANDS_PATH, json_encode($enabledCommandsFQNsPost));
-	}
-	
-	/**
-	 * Remove all commands that used to be loaded but are not anymore
-	 *
-	 * @param array $enabledCommandsFQNsPre
-	 * @return array
-	 */
-	private function filterDeletedCommands(array $enabledCommandsFQNsPre): array {
-		$enabledCommandsFQNs = [];
-		foreach ($enabledCommandsFQNsPre as $enabledCommandFQN) {
-			if (class_exists($enabledCommandFQN)) {
-				$enabledCommandsFQNs[] = $enabledCommandFQN;
+		$enabledCommandsFQNsPost = $enabledCommandsFQNsPre;
+		foreach ($newCommandFQNs as $newCommandFQN) {
+			if (in_array($newCommandFQN, $enabledCommandsFQNsPre, true) === false) {
+				$enabledCommandsFQNsPost[] = $newCommandFQN;
 			}
 		}
-		return $enabledCommandsFQNs;
+		
+		file_put_contents(Constants::ENABLED_COMMANDS_PATH, json_encode($enabledCommandsFQNsPost));
 	}
 	
 	private function getNewlyInstalledCommandFQNs(array $pluginRequirements): array {
