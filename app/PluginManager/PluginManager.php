@@ -28,7 +28,7 @@ class PluginManager {
 			file_put_contents(self::COMPOSER_PATH, json_encode($composerArray));
 			$this->composerUpdate($pluginRequirements);
 			$this->refreshEnabledCommandsConfig($pluginRequirements);
-			//@todo copy .env file from plugin directories to {BASEDIR}/config/{pluginName}.env (use the package name as plugin name so we do not have collisions)
+			$this->copyPluginConfigFiles($pluginRequirements);
 			//@todo refactor this in run.php and just include all .env files in {BASEDIR}/config
 		}
 		catch (\Throwable $e) {
@@ -105,7 +105,7 @@ class PluginManager {
 	 * @return string
 	 */
 	private function getCommandClassesFQNsFromPlugin($pluginName): string {
-		$pluginDirectoryPath = Constants::BASEDIR.'vendor/'.$pluginName;
+		$pluginDirectoryPath = Constants::BASEDIR.'vendor/'.$pluginName.'/';
 		
 		$commandFQNS  = [];
 		$phpFilePaths = $this->getPHPFilePaths($pluginDirectoryPath);
@@ -138,5 +138,17 @@ class PluginManager {
 		} while (count($directoryPaths) > 1);
 		
 		return $phpFilePaths;
+	}
+	
+	private function copyPluginConfigFiles(array $pluginRequirements):void {
+		foreach ($pluginRequirements as $pluginRequirement) {
+			$pluginName = $pluginRequirement[0];
+			
+			$pluginConfigPath = Constants::BASEDIR.'vendor/'.$pluginName.'/.env';
+			if (file_exists($pluginConfigPath)) {
+				$configFileName = str_replace('/','_', $pluginName).'.env';
+				copy($pluginConfigPath, Constants::CONFIGDIR.$configFileName);
+			}
+		}
 	}
 }
