@@ -78,7 +78,8 @@ class PluginManager {
 	private function refreshEnabledCommandsConfig(array $pluginRequirements): void {
 		$enabledCommandsFQNsPre = $this->getEnabledCommands();
 		
-		$enabledCommandsFQNsPost = $this->getLoadedClassesThatStillExist($enabledCommandsFQNsPre);
+		//@todo does this actually work since classes might already be in memory?
+		$enabledCommandsFQNsPost = $this->filterDeletedCommands($enabledCommandsFQNsPre);
 		$enabledCommandsFQNsPost = array_merge($enabledCommandsFQNsPost, $this->getNewlyInstalledCommandFQNs($pluginRequirements));
 		
 		file_put_contents(self::ENABLED_COMMANDS_PATH, json_encode($enabledCommandsFQNsPost));
@@ -90,7 +91,7 @@ class PluginManager {
 	 * @param array $enabledCommandsFQNsPre
 	 * @return array
 	 */
-	private function getLoadedClassesThatStillExist(array $enabledCommandsFQNsPre): array {
+	private function filterDeletedCommands(array $enabledCommandsFQNsPre): array {
 		$enabledCommandsFQNs = [];
 		foreach ($enabledCommandsFQNsPre as $enabledCommandFQN) {
 			if (class_exists($enabledCommandFQN)) {
