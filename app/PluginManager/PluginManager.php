@@ -9,6 +9,7 @@ class PluginManager {
 	private const COMPOSER_PATH      = Constants::BASE_DIR.'composer.json';
 	private const COMPOSER_LOCK_PATH = Constants::BASE_DIR.'composer.lock';
 	private const PLUGIN_PATH        = Constants::BASE_DIR.'plugins.json';
+	private const PLUGIN_LOCK_PATH   = Constants::BASE_DIR.'plugins.lock';
 	private const VENDOR_PATH        = Constants::BASE_DIR.'vendor/';
 	
 	/** @var StaticCodeAnalyzer */
@@ -23,21 +24,14 @@ class PluginManager {
 		
 		$composerLockFileOriginal = file_get_contents(self::COMPOSER_LOCK_PATH);
 		$composerFileOriginal     = file_get_contents(self::COMPOSER_PATH);
-		$composerArray            = json_decode($composerFileOriginal, true);
-		
-		if ($composerArray === null) {
-			throw new \Exception('Could not read composer file');
-		}
-		
-		$composerArray['require'] = array_merge($composerArray['require'], $pluginRequirements);
 		
 		try {
-			file_put_contents(self::COMPOSER_PATH, json_encode($composerArray));
-			//@todo add entries from our plugin.lock to composer.lock
+			$this->addPluginRequirementsToComposerFile($pluginRequirements);
+			$this->addPluginLockToComposerLock();
 			$this->composerUpdate($pluginRequirements);
 			$this->refreshEnabledCommandsConfig($pluginRequirements);
 			$this->copyPluginConfigFiles($pluginRequirements);
-			//@todo read the diff of the composer lock, add that to our own plugin.lock
+			$this->createPluginLockFile($pluginRequirements);
 		}
 		catch (\Throwable $e) {
 			throw $e;
@@ -61,6 +55,17 @@ class PluginManager {
 		
 		$pluginRequirements = $pluginFile['require'];
 		return $pluginRequirements;
+	}
+	
+	private function addPluginRequirementsToComposerFile($pluginRequirements) {
+		$composerArray = json_decode(file_get_contents(self::COMPOSER_PATH), true);
+		
+		if ($composerArray === null) {
+			throw new \Exception('Could not read composer file');
+		}
+		
+		$composerArray['require'] = array_merge($composerArray['require'], $pluginRequirements);
+		file_put_contents(self::COMPOSER_PATH, json_encode($composerArray));
 	}
 	
 	private function composerUpdate(array $pluginRequirements): void {
@@ -145,5 +150,74 @@ class PluginManager {
 				copy($pluginConfigPath, Constants::CONFIG_DIR.$configFileName);
 			}
 		}
+	}
+	
+	private function createPluginLockFile(array $pluginRequirements) {
+		$composerLockArray = json_decode(file_get_contents(self::COMPOSER_LOCK_PATH));
+		
+		$pluginNames = array_keys($pluginRequirements);
+		
+		$pluginLockArray = ['packages' => []];
+		foreach ($composerLockArray['packages'] as $package) {
+			if (in_array($package['name'], $pluginNames)) {
+				$pluginLockArray['packages'][] = $package;
+			}
+		}
+		
+		file_put_contents(self::PLUGIN_LOCK_PATH, json_encode($pluginLockArray));
+	}
+	
+	private function addPluginLockToComposerLock(): void {
+		if (is_file(self::PLUGIN_LOCK_PATH) === false) {
+			return;
+		}
+		
+		$pluginLockArray   = json_decode(file_get_contents(self::PLUGIN_LOCK_PATH));
+		$composerLockArray = json_decode(file_get_contents(self::COMPOSER_LOCK_PATH));
+		$composerFile      = file_get_contents(self::COMPOSER_PATH);
+		$composerArray     = json_decode($composerFile);
+		
+		$composerLockArray['packages']     = array_merge($composerLockArray['packages'], $pluginLockArray['packages']);
+		$composerLockArray['hash']         = md5($composerFile);
+		$composerLockArray['content-hash'] = $this->getContentHash($composerArray);
+		
+		file_put_contents(self::COMPOSER_LOCK_PATH, json_encode($composerLockArray));
+	}
+	
+	/**
+	 * @todo include composer as a dependency and use that function since it's public static
+	 * Returns the md5 hash of the sorted content of the composer file.
+	 *
+	 * @param array $composerArray The contents of the composer file.
+	 *
+	 * @return string
+	 */
+	private function getContentHash(array $composerArray) {
+		$relevantKeys = array(
+			'name',
+			'version',
+			'require',
+			'require-dev',
+			'conflict',
+			'replace',
+			'provide',
+			'minimum-stability',
+			'prefer-stable',
+			'repositories',
+			'extra',
+		);
+		
+		$relevantContent = array();
+		
+		foreach (array_intersect($relevantKeys, array_keys($composerArray)) as $key) {
+			$relevantContent[$key] = $composerArray[$key];
+		}
+		if (isset($composerArray['config']['platform'])) {
+			$relevantContent['config']['platform'] = $composerArray['config']['platform'];
+		}
+		
+		ksort($relevantContent);
+		
+		return md5(json_encode($relevantContent));
 	}
 }
