@@ -16,6 +16,7 @@ class Bootstrapper {
 	private static function importConfiguration(): void {
 		$fileNames = scandir(Constants::CONFIG_DIR);
 		
+		//@todo apparently 'null' is not transformed to null :( fix this shit
 		foreach ($fileNames as $fileName) {
 			$filePath = Constants::CONFIG_DIR.$fileName;
 			if (is_file($filePath) && substr($filePath, -4) === '.env') {
