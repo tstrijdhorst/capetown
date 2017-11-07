@@ -4,6 +4,7 @@ namespace Capetown\Runner\PluginManager;
 
 use Capetown\Runner\Constants;
 use Capetown\Runner\EnabledCommands;
+use Composer\Package\Locker;
 
 class PluginManager {
 	private const COMPOSER_PATH      = Constants::BASE_DIR.'composer.json';
@@ -175,49 +176,11 @@ class PluginManager {
 		$pluginLockArray   = json_decode(file_get_contents(self::PLUGIN_LOCK_PATH), true);
 		$composerLockArray = json_decode(file_get_contents(self::COMPOSER_LOCK_PATH), true);
 		$composerFile      = file_get_contents(self::COMPOSER_PATH);
-		$composerArray     = json_decode($composerFile, true);
 		
 		$composerLockArray['packages']     = array_merge($composerLockArray['packages'], $pluginLockArray['packages']);
 		$composerLockArray['hash']         = md5($composerFile);
-		$composerLockArray['content-hash'] = $this->getContentHash($composerArray);
+		$composerLockArray['content-hash'] = Locker::getContentHash($composerFile);
 		
 		file_put_contents(self::COMPOSER_LOCK_PATH, json_encode($composerLockArray));
-	}
-	
-	/**
-	 * @todo include composer as a dependency and use that function since it's public static
-	 * Returns the md5 hash of the sorted content of the composer file.
-	 *
-	 * @param array $composerArray The contents of the composer file.
-	 *
-	 * @return string
-	 */
-	private function getContentHash(array $composerArray) {
-		$relevantKeys = array(
-			'name',
-			'version',
-			'require',
-			'require-dev',
-			'conflict',
-			'replace',
-			'provide',
-			'minimum-stability',
-			'prefer-stable',
-			'repositories',
-			'extra',
-		);
-		
-		$relevantContent = array();
-		
-		foreach (array_intersect($relevantKeys, array_keys($composerArray)) as $key) {
-			$relevantContent[$key] = $composerArray[$key];
-		}
-		if (isset($composerArray['config']['platform'])) {
-			$relevantContent['config']['platform'] = $composerArray['config']['platform'];
-		}
-		
-		ksort($relevantContent);
-		
-		return md5(json_encode($relevantContent));
 	}
 }
