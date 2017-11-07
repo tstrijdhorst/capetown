@@ -153,7 +153,7 @@ class PluginManager {
 	}
 	
 	private function createPluginLockFile(array $pluginRequirements) {
-		$composerLockArray = json_decode(file_get_contents(self::COMPOSER_LOCK_PATH));
+		$composerLockArray = json_decode(file_get_contents(self::COMPOSER_LOCK_PATH), true);
 		
 		$pluginNames = array_keys($pluginRequirements);
 		
@@ -172,10 +172,10 @@ class PluginManager {
 			return;
 		}
 		
-		$pluginLockArray   = json_decode(file_get_contents(self::PLUGIN_LOCK_PATH));
-		$composerLockArray = json_decode(file_get_contents(self::COMPOSER_LOCK_PATH));
+		$pluginLockArray   = json_decode(file_get_contents(self::PLUGIN_LOCK_PATH), true);
+		$composerLockArray = json_decode(file_get_contents(self::COMPOSER_LOCK_PATH), true);
 		$composerFile      = file_get_contents(self::COMPOSER_PATH);
-		$composerArray     = json_decode($composerFile);
+		$composerArray     = json_decode($composerFile, true);
 		
 		$composerLockArray['packages']     = array_merge($composerLockArray['packages'], $pluginLockArray['packages']);
 		$composerLockArray['hash']         = md5($composerFile);
