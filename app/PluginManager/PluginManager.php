@@ -66,6 +66,10 @@ class PluginManager {
 		}
 	}
 	
+	public function refreshPlugins(): void {
+		$this->refreshEnabledCommandsConfig($this->getPluginRequirements());
+	}
+	
 	/**
 	 * @throws \Exception
 	 * @return array
