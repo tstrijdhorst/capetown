@@ -23,8 +23,8 @@ class InstallCommand extends Command {
 			 ->setDescription('Installs the plugins from the composer.lock file if present, or falls back on the composer.json.')
 			 ->setHelp('Installs the plugins from the composer.lock file if present, or falls back on the composer.json.. Automatically refreshes the enabled commands and syncs configuration');;
 		
-		$this->addOption('no-refresh', null, InputOption::VALUE_OPTIONAL, 'Do not refresh enabled plugins', false);
-		$this->addOption('no-configure', null, InputOption::VALUE_OPTIONAL, 'Do not sync plugin configuration', false);
+		$this->addOption('no-refresh', null, InputOption::VALUE_NONE, 'Do not refresh enabled plugins');
+		$this->addOption('no-configure', null, InputOption::VALUE_NONE, 'Do not sync plugin configuration');
 	}
 	
 	protected function execute(InputInterface $input, OutputInterface $output) {
