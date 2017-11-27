@@ -43,6 +43,29 @@ class PluginManager {
 		}
 	}
 	
+	public function installPlugins(): void {
+		$pluginRequirements = $this->getPluginRequirements();
+		
+		$composerLockFileOriginal = file_get_contents(self::COMPOSER_LOCK_PATH);
+		$composerFileOriginal     = file_get_contents(self::COMPOSER_PATH);
+		
+		try {
+			$this->addPluginRequirementsToComposerFile($pluginRequirements);
+			$this->addPluginLockToComposerLock();
+			$this->runComposerCommand($pluginRequirements, 'install');
+			$this->refreshEnabledCommandsConfig($pluginRequirements);
+			$this->copyPluginConfigFiles($pluginRequirements);
+			$this->createPluginLockFile($pluginRequirements);
+		}
+		catch (\Throwable $e) {
+			throw $e;
+		}
+		finally {
+			file_put_contents(self::COMPOSER_PATH, $composerFileOriginal);
+			file_put_contents(self::COMPOSER_LOCK_PATH, $composerLockFileOriginal);
+		}
+	}
+	
 	/**
 	 * @throws \Exception
 	 * @return array
