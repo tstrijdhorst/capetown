@@ -1,6 +1,7 @@
 <?php
 
 use Capetown\Runner\Bootstrapper;
+use Capetown\Runner\PluginManager\ConsoleCommands\InstallCommand;
 use Capetown\Runner\PluginManager\ConsoleCommands\UpdateCommand;
 use Capetown\Runner\PluginManager\PluginManager;
 use Capetown\Runner\PluginManager\StaticCodeAnalyzer;
@@ -12,4 +13,5 @@ Bootstrapper::bootstrap();
 $pluginManager = new PluginManager(new StaticCodeAnalyzer());
 $application   = new Application();
 $application->add(new UpdateCommand($pluginManager));
+$application->add(new InstallCommand($pluginManager));
 $application->run();
