@@ -19,7 +19,7 @@ class InstallCommand extends Command {
 	
 	protected function configure() {
 		$this->setName('plugins:install')
-			 ->setDescription('Install all the packages required in the composer.lock and plugins.lock files. If there is no composer.lock or plugin.lock it will use the entries from the .json files.');
+			 ->setDescription('Installs the plugins from the composer.lock file if present, or falls back on the composer.json.');
 	}
 	
 	protected function execute(InputInterface $input, OutputInterface $output) {

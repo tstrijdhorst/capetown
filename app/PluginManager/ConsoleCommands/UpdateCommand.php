@@ -19,7 +19,8 @@ class UpdateCommand extends Command {
 	
 	protected function configure() {
 		$this->setName('plugins:update')
-			->setDescription('Update all the packages required in the composer.json and plugins.json files. On changes, creates new plugins.lock file.');
+			->setDescription('Updates your plugins to the latest version according to plugins.json, and updates the plugins.lock file.')
+		;
 	}
 	
 	protected function execute(InputInterface $input, OutputInterface $output) {
