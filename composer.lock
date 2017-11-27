@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "capetown/core",
-            "version": "0.1.7",
+            "version": "0.1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tstrijdhorst/capetown-core.git",
-                "reference": "6757b2f5b89ce0e437def07fa8e509cb40112daa"
+                "reference": "cbb35fd4cb752a3bcb2e9fd749a6f7abaf38389a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tstrijdhorst/capetown-core/zipball/6757b2f5b89ce0e437def07fa8e509cb40112daa",
-                "reference": "6757b2f5b89ce0e437def07fa8e509cb40112daa",
+                "url": "https://api.github.com/repos/tstrijdhorst/capetown-core/zipball/cbb35fd4cb752a3bcb2e9fd749a6f7abaf38389a",
+                "reference": "cbb35fd4cb752a3bcb2e9fd749a6f7abaf38389a",
                 "shasum": ""
             },
             "require": {
@@ -41,7 +41,7 @@
                 }
             ],
             "description": "Capetown Core Library",
-            "time": "2017-10-13 11:03:16"
+            "time": "2017-11-27 15:08:07"
         },
         {
             "name": "composer/ca-bundle",
