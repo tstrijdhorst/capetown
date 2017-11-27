@@ -40,6 +40,9 @@ class StaticCodeAnalyzer {
 	}
 	
 	public function implementsCommandInterface(string $phpFilePath):bool {
+		//@todo add missing case: Class extends a class that implements this interface
+		//@todo add missing case: Class implements an interface that extends this interface
+		
 		$contents = file_get_contents($phpFilePath);
 		
 		$interfaces = [];
