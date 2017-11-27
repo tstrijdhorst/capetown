@@ -20,14 +20,14 @@ class PluginManager {
 		$this->staticCodeAnalyzer = $staticCodeAnalyzer;
 	}
 	
-	public function installPlugins(): void {
+	public function updatePlugins(): void {
 		$pluginRequirements = $this->getPluginRequirements();
 		
 		$composerLockFileOriginal = file_get_contents(self::COMPOSER_LOCK_PATH);
 		$composerFileOriginal     = file_get_contents(self::COMPOSER_PATH);
 		
 		try {
-			$this->addPluginRequirementsToComposerFile($pluginRequirements);
+			$this->addPluginRequirementsToComposerFile($pluginRequirements, $replaceComposerRequirements=true);
 			$this->addPluginLockToComposerLock();
 			$this->composerUpdate($pluginRequirements);
 			$this->refreshEnabledCommandsConfig($pluginRequirements);
@@ -58,14 +58,26 @@ class PluginManager {
 		return $pluginRequirements;
 	}
 	
-	private function addPluginRequirementsToComposerFile($pluginRequirements) {
+	/**
+	 * @param array $pluginRequirements
+	 * @param bool  $replaceComposerRequirements If this is set to true, it will replace the existing composer plugin
+	 *                                           requirements instead of merging them
+	 * @throws \Exception
+	 */
+	private function addPluginRequirementsToComposerFile(array $pluginRequirements, $replaceComposerRequirements = false) {
 		$composerArray = json_decode(file_get_contents(self::COMPOSER_PATH), true);
 		
 		if ($composerArray === null) {
 			throw new \Exception('Could not read composer file');
 		}
 		
-		$composerArray['require'] = array_merge($composerArray['require'], $pluginRequirements);
+		if ($replaceComposerRequirements) {
+			$composerArray['require'] = $pluginRequirements;
+		}
+		else {
+			$composerArray['require'] = array_merge($composerArray['require'], $pluginRequirements);
+		}
+		
 		file_put_contents(self::COMPOSER_PATH, json_encode($composerArray));
 	}
 	
@@ -106,7 +118,7 @@ class PluginManager {
 		return $commandFQNs;
 	}
 	
-	private function getCommandClassesFQNsFromPlugin($pluginName): array {
+	private function getCommandClassesFQNsFromPlugin(string $pluginName): array {
 		$pluginDirectoryPath = self::VENDOR_PATH.$pluginName.'/';
 		
 		$commandFQNs = [];
@@ -119,7 +131,7 @@ class PluginManager {
 		return $commandFQNs;
 	}
 	
-	private function getPHPFilePaths($pluginDirectoryPath): array {
+	private function getPHPFilePaths(string $pluginDirectoryPath): array {
 		$phpFilePaths   = [];
 		$directoryPaths = [$pluginDirectoryPath];
 		do {
