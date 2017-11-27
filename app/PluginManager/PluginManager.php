@@ -37,7 +37,7 @@ class PluginManager {
 			}
 			
 			if ($syncConfiguration) {
-				$this->copyPluginConfigFiles($pluginRequirements);
+				$this->configure();
 			}
 			
 			$this->createPluginLockFile($pluginRequirements);
@@ -67,7 +67,7 @@ class PluginManager {
 			}
 			
 			if ($syncConfiguration) {
-				$this->copyPluginConfigFiles($pluginRequirements);
+				$this->configure();
 			}
 			
 			$this->createPluginLockFile($pluginRequirements);
@@ -86,6 +86,7 @@ class PluginManager {
 	}
 	
 	public function configure(): void {
+		$this->removeOldPluginConfigFiles();
 		$this->copyPluginConfigFiles($this->getPluginRequirements());
 	}
 	
@@ -268,6 +269,31 @@ class PluginManager {
 		}
 	}
 	
+	private function removeOldPluginConfigFiles(): void {
+		$fileNames = scandir(Constants::CONFIG_DIR);
+		
+		foreach ($fileNames as $configFileName) {
+			$configFileNameExploded = explode('.', $configFileName);
+			
+			if (count($configFileNameExploded) === 1) {
+				continue;
+			}
+			
+			$pluginName = $configFileNameExploded[0];
+			$extension  = $configFileNameExploded[1];
+			
+			//Not a config file
+			if ($extension !== 'env') {
+				continue;
+			}
+			
+			$pluginPath = self::VENDOR_PATH.str_replace('_', '/', $pluginName);
+			if (file_exists($pluginPath) === false) {
+				unlink(Constants::CONFIG_DIR.$configFileName);
+			}
+		}
+	}
+	
 	private function createPluginLockFile(array $pluginRequirements) {
 		$composerLockArray = json_decode(file_get_contents(self::COMPOSER_LOCK_PATH), true);
 		
@@ -288,7 +314,7 @@ class PluginManager {
 			return;
 		}
 		
-		$pluginLockArray   = $this->getPluginLockArray();
+		$pluginLockArray = $this->getPluginLockArray();
 		
 		if ($pluginLockArray === []) {
 			return;
