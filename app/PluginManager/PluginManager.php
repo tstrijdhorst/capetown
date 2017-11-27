@@ -2,6 +2,7 @@
 
 namespace Capetown\Runner\PluginManager;
 
+use Capetown\Core\CapetownException;
 use Capetown\Runner\Constants;
 use Capetown\Runner\EnabledCommands;
 use Composer\Package\Locker;
@@ -169,13 +170,21 @@ class PluginManager {
 			$commandString .= ' '.escapeshellarg($packageName);
 		}
 		
-		exec($commandString, $output);
+		exec($commandString, $output, $returnValue);
+		
+		if ($returnValue !== 0) {
+			throw new CapetownException('Composer exited with errors');
+		}
 	}
 	
 	private function runComposerInstall(): void {
 		$commandString = getenv('COMPOSER_PATH').' install';
 		
-		exec($commandString, $output);
+		exec($commandString, $output, $returnValue);
+		
+		if ($returnValue !== 0) {
+			throw new CapetownException('Composer exited with errors');
+		}
 	}
 	
 	private function refreshEnabledCommandsConfig(array $pluginRequirements): void {
