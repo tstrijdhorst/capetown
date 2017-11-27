@@ -98,29 +98,21 @@ class PluginManager {
 	 * @return array
 	 */
 	private function getPluginRequirements(): array {
-		$pluginFile = json_decode(file_get_contents(self::PLUGIN_PATH), true);
+		$pluginArray = $this->getPluginArray();
 		
-		if ($pluginFile === null) {
-			throw new \Exception('Could not read plugins file');
-		}
-		
-		$pluginRequirements = $pluginFile['require'];
+		$pluginRequirements = $pluginArray['require'];
 		return $pluginRequirements;
 	}
 	
 	private function addPluginRequirementToPluginsFile($name, $version) {
-		$pluginFile = json_decode(file_get_contents(self::PLUGIN_PATH), true);
-		
-		if ($pluginFile === null) {
-			throw new \Exception('Could not read plugins file');
-		}
+		$pluginArray = $this->getPluginArray();
 		
 		if ($version === null) {
 			$version = '*';
 		}
 		
-		$pluginFile['require'][$name] = $version;
-		file_put_contents(self::PLUGIN_PATH, json_encode($pluginFile, JSON_PRETTY_PRINT));
+		$pluginArray['require'][$name] = $version;
+		file_put_contents(self::PLUGIN_PATH, json_encode($pluginArray, JSON_PRETTY_PRINT));
 	}
 	
 	private function replacePluginRequirementsInComposerFile($pluginRequirements) {
@@ -162,11 +154,7 @@ class PluginManager {
 	}
 	
 	private function addPluginRequirementsToComposerFile(array $pluginRequirements) {
-		$composerArray = json_decode(file_get_contents(self::COMPOSER_PATH), true);
-		
-		if ($composerArray === null) {
-			throw new \Exception('Could not read composer file');
-		}
+		$composerArray = $this->getComposerArray();
 		
 		$composerArray['require'] = array_merge($composerArray['require'], $pluginRequirements);
 		
@@ -283,8 +271,13 @@ class PluginManager {
 			return;
 		}
 		
-		$pluginLockArray   = json_decode(file_get_contents(self::PLUGIN_LOCK_PATH), true);
-		$composerLockArray = json_decode(file_get_contents(self::COMPOSER_LOCK_PATH), true);
+		$pluginLockArray   = $this->getPluginLockArray();
+		
+		if ($pluginLockArray === []) {
+			return;
+		}
+		
+		$composerLockArray = $this->getComposerLockArray();
 		$composerFile      = file_get_contents(self::COMPOSER_PATH);
 		
 		$composerLockArray['packages']     = array_merge($composerLockArray['packages'], $pluginLockArray['packages']);
@@ -292,5 +285,74 @@ class PluginManager {
 		$composerLockArray['content-hash'] = Locker::getContentHash($composerFile);
 		
 		file_put_contents(self::COMPOSER_LOCK_PATH, json_encode($composerLockArray, JSON_PRETTY_PRINT));
+	}
+	
+	/**
+	 * @return array
+	 * @throws \Exception
+	 */
+	private function getComposerArray(): array {
+		$composerArray = json_decode(file_get_contents(self::COMPOSER_PATH), true);
+		if ($composerArray === null) {
+			throw new \Exception('Could not read composer file');
+		}
+		
+		return $composerArray;
+	}
+	
+	/**
+	 * @return array
+	 * @throws \Exception
+	 */
+	private function getComposerLockArray(): array {
+		$composerLockArray = json_decode(file_get_contents(self::COMPOSER_LOCK_PATH), true);
+		
+		if ($composerLockArray === null) {
+			throw new \Exception('Could not read composer lock file');
+		}
+		
+		return $composerLockArray;
+	}
+	
+	/**
+	 * @return array
+	 * @throws \Exception
+	 */
+	private function getPluginArray() {
+		$pluginFile = file_get_contents(self::PLUGIN_PATH);
+		
+		if ($pluginFile === false) {
+			$pluginArray = [];
+		}
+		else {
+			$pluginArray = json_decode($pluginFile, true);
+			
+			if ($pluginArray === null) {
+				throw new \Exception('Could not read plugins file');
+			}
+		}
+		
+		return $pluginArray;
+	}
+	
+	/**
+	 * @return array
+	 * @throws \Exception
+	 */
+	private function getPluginLockArray(): array {
+		$pluginLockFile = file_get_contents(self::PLUGIN_LOCK_PATH);
+		
+		if ($pluginLockFile === false) {
+			$pluginLockArray = [];
+		}
+		else {
+			$pluginLockArray = json_decode($pluginLockFile, true);
+			
+			if ($pluginLockArray === null) {
+				throw new \Exception('Could not read composer lock file');
+			}
+		}
+		
+		return $pluginLockArray;
 	}
 }
