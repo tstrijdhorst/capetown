@@ -35,7 +35,8 @@ class RequireCommand extends Command {
 		$name = $input->getArgument('name');
 		$version = $input->getArgument('version');
 		
-		$output->writeln('Installing plugin: '.$name.' Version: '.$version !== null ? $version : 'unspecified');
+		$versionString = $version !== null ? $version : 'unspecified';
+		$output->writeln('Requiring plugin: '.$name.' Version: '.$versionString);
 		$refreshCommands   = $input->getOption('no-refresh') === false;
 		$syncConfiguration = $input->getOption('no-configure') === false;
 		$this->pluginManager->require($name, $version, $refreshCommands, $syncConfiguration);
