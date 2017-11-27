@@ -120,7 +120,7 @@ class PluginManager {
 		}
 		
 		$pluginFile['require'][$name] = $version;
-		file_put_contents(self::PLUGIN_PATH, json_encode($pluginFile));
+		file_put_contents(self::PLUGIN_PATH, json_encode($pluginFile, JSON_PRETTY_PRINT));
 	}
 	
 	private function replacePluginRequirementsInComposerFile($pluginRequirements) {
@@ -158,7 +158,7 @@ class PluginManager {
 		
 		$composerArray['require'] = array_merge($composerArray['require'], $pluginRequirements);
 		
-		file_put_contents(self::COMPOSER_PATH, json_encode($composerArray));
+		file_put_contents(self::COMPOSER_PATH, json_encode($composerArray, JSON_PRETTY_PRINT));
 	}
 	
 	private function addPluginRequirementsToComposerFile(array $pluginRequirements) {
@@ -170,7 +170,7 @@ class PluginManager {
 		
 		$composerArray['require'] = array_merge($composerArray['require'], $pluginRequirements);
 		
-		file_put_contents(self::COMPOSER_PATH, json_encode($composerArray));
+		file_put_contents(self::COMPOSER_PATH, json_encode($composerArray, JSON_PRETTY_PRINT));
 	}
 	
 	private function runComposerUpdate(array $pluginRequirements, $specificPackageName = null): void {
@@ -202,7 +202,7 @@ class PluginManager {
 			}
 		}
 		
-		file_put_contents(Constants::ENABLED_COMMANDS_PATH, json_encode($enabledCommandsFQNsPost));
+		file_put_contents(Constants::ENABLED_COMMANDS_PATH, json_encode($enabledCommandsFQNsPost, JSON_PRETTY_PRINT));
 	}
 	
 	private function getNewlyInstalledCommandFQNs(array $pluginRequirements): array {
@@ -275,7 +275,7 @@ class PluginManager {
 			}
 		}
 		
-		file_put_contents(self::PLUGIN_LOCK_PATH, json_encode($pluginLockArray));
+		file_put_contents(self::PLUGIN_LOCK_PATH, json_encode($pluginLockArray, JSON_PRETTY_PRINT));
 	}
 	
 	private function addPluginLockToComposerLock(): void {
@@ -291,6 +291,6 @@ class PluginManager {
 		$composerLockArray['hash']         = md5($composerFile);
 		$composerLockArray['content-hash'] = Locker::getContentHash($composerFile);
 		
-		file_put_contents(self::COMPOSER_LOCK_PATH, json_encode($composerLockArray));
+		file_put_contents(self::COMPOSER_LOCK_PATH, json_encode($composerLockArray, JSON_PRETTY_PRINT));
 	}
 }
