@@ -273,7 +273,7 @@ class PluginManager {
 		$fileNames = scandir(Constants::CONFIG_DIR);
 		
 		foreach ($fileNames as $configFileName) {
-			$skipFiles = ['.', '..', '.env', '.env.dist'];
+			$skipFiles = ['.', '..', '.env', '.env.dist', 'enabledCommands.json'];
 			if (in_array($configFileName, $skipFiles, true)) {
 				continue;
 			}
