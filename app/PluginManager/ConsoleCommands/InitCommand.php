@@ -24,7 +24,7 @@ class InitCommand extends Command {
 	}
 	
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$output->writeln('Initializing capetown configuration. Please check '.Constants::CONFIG_DIR.'/.env for more information');
+		$output->writeln('Initializing capetown configuration. Please check '.Constants::CONFIG_DIR.'.env for more information');
 		copy(Constants::CONFIG_DIR.'.env.dist', Constants::CONFIG_DIR.'.env');
 	}
 }
