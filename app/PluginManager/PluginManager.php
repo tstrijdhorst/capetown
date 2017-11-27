@@ -27,7 +27,7 @@ class PluginManager {
 		$composerFileOriginal     = file_get_contents(self::COMPOSER_PATH);
 		
 		try {
-			$this->addPluginRequirementsToComposerFile($pluginRequirements, $replaceComposerRequirements=true);
+			$this->addPluginRequirementsToComposerFile($pluginRequirements);
 			$this->addPluginLockToComposerLock();
 			$this->runComposerCommand($pluginRequirements, 'update');
 			$this->refreshEnabledCommandsConfig($pluginRequirements);
@@ -81,25 +81,14 @@ class PluginManager {
 		return $pluginRequirements;
 	}
 	
-	/**
-	 * @param array $pluginRequirements
-	 * @param bool  $replaceComposerRequirements If this is set to true, it will replace the existing composer plugin
-	 *                                           requirements instead of merging them
-	 * @throws \Exception
-	 */
-	private function addPluginRequirementsToComposerFile(array $pluginRequirements, $replaceComposerRequirements = false) {
+	private function addPluginRequirementsToComposerFile(array $pluginRequirements) {
 		$composerArray = json_decode(file_get_contents(self::COMPOSER_PATH), true);
 		
 		if ($composerArray === null) {
 			throw new \Exception('Could not read composer file');
 		}
-		
-		if ($replaceComposerRequirements) {
-			$composerArray['require'] = $pluginRequirements;
-		}
-		else {
-			$composerArray['require'] = array_merge($composerArray['require'], $pluginRequirements);
-		}
+
+		$composerArray['require'] = array_merge($composerArray['require'], $pluginRequirements);
 		
 		file_put_contents(self::COMPOSER_PATH, json_encode($composerArray));
 	}
@@ -189,6 +178,10 @@ class PluginManager {
 	}
 	
 	private function createPluginLockFile(array $pluginRequirements) {
+		if (is_file(self::COMPOSER_LOCK_PATH) === false) {
+			sleep(1);
+		}
+		
 		$composerLockArray = json_decode(file_get_contents(self::COMPOSER_LOCK_PATH), true);
 		
 		$pluginNames = array_keys($pluginRequirements);
