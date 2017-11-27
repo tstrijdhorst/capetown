@@ -273,6 +273,10 @@ class PluginManager {
 		$fileNames = scandir(Constants::CONFIG_DIR);
 		
 		foreach ($fileNames as $configFileName) {
+			if ($configFileName === '.' || $configFileName === '..') {
+				continue;
+			}
+			
 			$configFileNameExploded = explode('.', $configFileName);
 			
 			if (count($configFileNameExploded) === 1) {
