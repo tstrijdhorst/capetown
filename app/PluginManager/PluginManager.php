@@ -29,7 +29,7 @@ class PluginManager {
 		try {
 			$this->addPluginRequirementsToComposerFile($pluginRequirements, $replaceComposerRequirements=true);
 			$this->addPluginLockToComposerLock();
-			$this->composerUpdate($pluginRequirements);
+			$this->runComposerCommand($pluginRequirements, 'update');
 			$this->refreshEnabledCommandsConfig($pluginRequirements);
 			$this->copyPluginConfigFiles($pluginRequirements);
 			$this->createPluginLockFile($pluginRequirements);
@@ -81,8 +81,8 @@ class PluginManager {
 		file_put_contents(self::COMPOSER_PATH, json_encode($composerArray));
 	}
 	
-	private function composerUpdate(array $pluginRequirements): void {
-		$commandString = getenv('COMPOSER_PATH').' update';
+	private function runComposerCommand(array $pluginRequirements, string $command): void {
+		$commandString = getenv('COMPOSER_PATH').' '.escapeshellarg($command);
 		
 		$packageNames = array_keys($pluginRequirements);
 		foreach ($packageNames as $packageName) {
