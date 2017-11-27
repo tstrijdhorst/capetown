@@ -1,5 +1,1 @@
-{
-  "require" : {
-    "capetown/giphy-command":"^1.0"
-  }
-}
+{"require":{"capetown\/giphy-command":"^1.0"}}

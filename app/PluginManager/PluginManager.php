@@ -20,7 +20,7 @@ class PluginManager {
 		$this->staticCodeAnalyzer = $staticCodeAnalyzer;
 	}
 	
-	public function updatePlugins(bool $refreshCommands, bool $syncConfiguration): void {
+	public function updatePlugins(bool $refreshCommands = true, bool $syncConfiguration = true, string $specificPackageName = null): void {
 		$pluginRequirements = $this->getPluginRequirements();
 		
 		$composerLockFileOriginal = file_get_contents(self::COMPOSER_LOCK_PATH);
@@ -29,7 +29,7 @@ class PluginManager {
 		try {
 			$this->replacePluginRequirementsInComposerFile($pluginRequirements);
 			$this->addPluginLockToComposerLock();
-			$this->runComposerUpdate($pluginRequirements);
+			$this->runComposerUpdate($pluginRequirements, $specificPackageName);
 			
 			if ($refreshCommands) {
 				$this->refreshEnabledCommandsConfig($pluginRequirements);
@@ -50,7 +50,7 @@ class PluginManager {
 		}
 	}
 	
-	public function installPlugins(bool $refreshCommands, bool $syncConfiguration): void {
+	public function installPlugins(bool $refreshCommands = true, bool $syncConfiguration = true): void {
 		$pluginRequirements = $this->getPluginRequirements();
 		
 		$composerLockFileOriginal = file_get_contents(self::COMPOSER_LOCK_PATH);
@@ -88,6 +88,11 @@ class PluginManager {
 		$this->copyPluginConfigFiles($this->getPluginRequirements());
 	}
 	
+	public function require(string $packageName, string $version = null, bool $refreshCommands = true, bool $syncConfiguration = true): void {
+		$this->addPluginRequirementToPluginsFile($packageName, $version);
+		$this->updatePlugins($refreshCommands, $syncConfiguration, $packageName);
+	}
+	
 	/**
 	 * @throws \Exception
 	 * @return array
@@ -101,6 +106,21 @@ class PluginManager {
 		
 		$pluginRequirements = $pluginFile['require'];
 		return $pluginRequirements;
+	}
+	
+	private function addPluginRequirementToPluginsFile($name, $version) {
+		$pluginFile = json_decode(file_get_contents(self::PLUGIN_PATH), true);
+		
+		if ($pluginFile === null) {
+			throw new \Exception('Could not read plugins file');
+		}
+		
+		if ($version === null) {
+			$version = '*';
+		}
+		
+		$pluginFile['require'][$name] = $version;
+		file_put_contents(self::PLUGIN_PATH, json_encode($pluginFile));
 	}
 	
 	private function replacePluginRequirementsInComposerFile($pluginRequirements) {
@@ -153,8 +173,8 @@ class PluginManager {
 		file_put_contents(self::COMPOSER_PATH, json_encode($composerArray));
 	}
 	
-	private function runComposerUpdate(array $pluginRequirements): void {
-		$commandString = getenv('COMPOSER_PATH').' update 2>&1';
+	private function runComposerUpdate(array $pluginRequirements, $specificPackageName = null): void {
+		$commandString = getenv('COMPOSER_PATH').' update '.escapeshellarg($specificPackageName).' 2>&1';
 		
 		$packageNames = array_keys($pluginRequirements);
 		foreach ($packageNames as $packageName) {
