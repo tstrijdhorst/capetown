@@ -1,18 +1,15 @@
 <?php
 
 use Capetown\Runner\Bootstrapper;
+use Capetown\Runner\PluginManager\ConsoleCommands\UpdateCommand;
 use Capetown\Runner\PluginManager\PluginManager;
 use Capetown\Runner\PluginManager\StaticCodeAnalyzer;
+use Composer\Console\Application;
 
 require_once __DIR__.'/vendor/autoload.php';
 Bootstrapper::bootstrap();
 
-if ($argc < 2 || ($argv[1] !== 'plugins' && $argv[2] !== 'install')) {
-	echo 'Usage: php '.$argv[0].' plugins install '.PHP_EOL;
-	exit(0);
-}
-
-echo 'Installing plugins'.PHP_EOL;
 $pluginManager = new PluginManager(new StaticCodeAnalyzer());
-
-$pluginManager->installPlugins();
+$application   = new Application();
+$application->add(new UpdateCommand($pluginManager));
+$application->run();
