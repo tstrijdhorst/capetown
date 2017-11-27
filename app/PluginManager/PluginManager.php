@@ -20,7 +20,7 @@ class PluginManager {
 		$this->staticCodeAnalyzer = $staticCodeAnalyzer;
 	}
 	
-	public function updatePlugins(): void {
+	public function updatePlugins(bool $refreshCommands, bool $syncConfiguration): void {
 		$pluginRequirements = $this->getPluginRequirements();
 		
 		$composerLockFileOriginal = file_get_contents(self::COMPOSER_LOCK_PATH);
@@ -30,8 +30,15 @@ class PluginManager {
 			$this->replacePluginRequirementsInComposerFile($pluginRequirements);
 			$this->addPluginLockToComposerLock();
 			$this->runComposerUpdate($pluginRequirements);
-			$this->refreshEnabledCommandsConfig($pluginRequirements);
-			$this->copyPluginConfigFiles($pluginRequirements);
+			
+			if ($refreshCommands) {
+				$this->refreshEnabledCommandsConfig($pluginRequirements);
+			}
+			
+			if ($syncConfiguration) {
+				$this->copyPluginConfigFiles($pluginRequirements);
+			}
+			
 			$this->createPluginLockFile($pluginRequirements);
 		}
 		catch (\Throwable $e) {
@@ -43,7 +50,7 @@ class PluginManager {
 		}
 	}
 	
-	public function installPlugins(): void {
+	public function installPlugins(bool $refreshCommands, bool $syncConfiguration): void {
 		$pluginRequirements = $this->getPluginRequirements();
 		
 		$composerLockFileOriginal = file_get_contents(self::COMPOSER_LOCK_PATH);
@@ -53,8 +60,15 @@ class PluginManager {
 			$this->addPluginRequirementsToComposerFile($pluginRequirements);
 			$this->addPluginLockToComposerLock();
 			$this->runComposerInstall();
-			$this->refreshEnabledCommandsConfig($pluginRequirements);
-			$this->copyPluginConfigFiles($pluginRequirements);
+			
+			if ($refreshCommands) {
+				$this->refreshEnabledCommandsConfig($pluginRequirements);
+			}
+			
+			if ($syncConfiguration) {
+				$this->copyPluginConfigFiles($pluginRequirements);
+			}
+			
 			$this->createPluginLockFile($pluginRequirements);
 		}
 		catch (\Throwable $e) {

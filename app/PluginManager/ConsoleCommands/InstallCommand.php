@@ -5,6 +5,7 @@ namespace Capetown\Runner\PluginManager\ConsoleCommands;
 use Capetown\Runner\PluginManager\PluginManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class InstallCommand extends Command {
@@ -13,17 +14,24 @@ class InstallCommand extends Command {
 	private $pluginManager;
 	
 	public function __construct(PluginManager $pluginManager) {
-		parent::__construct($name=null);
+		parent::__construct($name = null);
 		$this->pluginManager = $pluginManager;
 	}
 	
 	protected function configure() {
 		$this->setName('plugins:install')
-			 ->setDescription('Installs the plugins from the composer.lock file if present, or falls back on the composer.json.');
+			 ->setDescription('Installs the plugins from the composer.lock file if present, or falls back on the composer.json.')
+			 ->setHelp('Installs the plugins from the composer.lock file if present, or falls back on the composer.json.. Automatically refreshes the enabled commands and syncs configuration');;
+		
+		$this->addOption('no-refresh', null, InputOption::VALUE_OPTIONAL, 'Do not refresh enabled plugins', false);
+		$this->addOption('no-configure', null, InputOption::VALUE_OPTIONAL, 'Do not sync plugin configuration', false);
 	}
 	
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$output->writeln('Installing plugins');
-		$this->pluginManager->installPlugins();
+		
+		$refreshCommands   = boolval($input->getOption('no-refresh'));
+		$syncConfiguration = boolval($input->getOption('no-configure'));
+		$this->pluginManager->installPlugins($refreshCommands, $syncConfiguration);
 	}
 }
