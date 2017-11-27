@@ -273,7 +273,8 @@ class PluginManager {
 		$fileNames = scandir(Constants::CONFIG_DIR);
 		
 		foreach ($fileNames as $configFileName) {
-			if ($configFileName === '.' || $configFileName === '..') {
+			$skipFiles = ['.', '..', '.env', '.env.dist'];
+			if (in_array($configFileName, $skipFiles, true)) {
 				continue;
 			}
 			
