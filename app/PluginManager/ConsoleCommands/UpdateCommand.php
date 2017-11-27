@@ -30,8 +30,8 @@ class UpdateCommand extends Command {
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$output->writeln('Updating plugins');
 		
-		$refreshCommands   = boolval($input->getOption('no-refresh'));
-		$syncConfiguration = boolval($input->getOption('no-configure'));
+		$refreshCommands   = $input->getOption('no-refresh') === false;
+		$syncConfiguration = $input->getOption('no-configure') === false;
 		$this->pluginManager->updatePlugins($refreshCommands, $syncConfiguration);
 	}
 }
