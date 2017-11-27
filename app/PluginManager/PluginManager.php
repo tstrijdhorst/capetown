@@ -70,6 +70,10 @@ class PluginManager {
 		$this->refreshEnabledCommandsConfig($this->getPluginRequirements());
 	}
 	
+	public function configure(): void {
+		$this->copyPluginConfigFiles($this->getPluginRequirements());
+	}
+	
 	/**
 	 * @throws \Exception
 	 * @return array

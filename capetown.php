@@ -1,6 +1,7 @@
 <?php
 
 use Capetown\Runner\Bootstrapper;
+use Capetown\Runner\PluginManager\ConsoleCommands\ConfigureCommand;
 use Capetown\Runner\PluginManager\ConsoleCommands\InstallCommand;
 use Capetown\Runner\PluginManager\ConsoleCommands\RefreshCommand;
 use Capetown\Runner\PluginManager\ConsoleCommands\UpdateCommand;
@@ -16,4 +17,5 @@ $application   = new Application();
 $application->add(new UpdateCommand($pluginManager));
 $application->add(new InstallCommand($pluginManager));
 $application->add(new RefreshCommand($pluginManager));
+$application->add(new ConfigureCommand($pluginManager));
 $application->run();
