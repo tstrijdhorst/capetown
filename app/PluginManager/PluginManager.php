@@ -27,7 +27,7 @@ class PluginManager {
 		$composerFileOriginal     = file_get_contents(self::COMPOSER_PATH);
 		
 		try {
-			$this->addPluginRequirementsToComposerFile($pluginRequirements);
+			$this->replacePluginRequirementsInComposerFile($pluginRequirements);
 			$this->addPluginLockToComposerLock();
 			$this->runComposerCommand($pluginRequirements, 'update');
 			$this->refreshEnabledCommandsConfig($pluginRequirements);
@@ -81,13 +81,51 @@ class PluginManager {
 		return $pluginRequirements;
 	}
 	
+	private function replacePluginRequirementsInComposerFile($pluginRequirements) {
+		$composerArray = json_decode(file_get_contents(self::COMPOSER_PATH), true);
+		if ($composerArray === null) {
+			throw new \Exception('Could not read composer file');
+		}
+		
+		/**
+		 * If a package from the composer.json are already in the composer.lock add it with specifically that version so it doesn't get updated.
+		 * If a package from composer.json is not already in the composer.lock remove it completely so it doesn't get installed.
+		 */
+		$composerLockFile = file_get_contents(self::COMPOSER_LOCK_PATH);
+		if ($composerLockFile !== false) {
+			$composerLockArray = json_decode($composerLockFile, true);
+			if ($composerArray === null) {
+				throw new \Exception('Could not read composer lock file');
+			}
+			
+			$composerLockPackageMap = [];
+			foreach ($composerLockArray['packages'] as $package) {
+				$composerLockPackageMap[$package['name']] = $package;
+			}
+			
+			$composerLockPackageNames = array_keys($composerLockPackageMap);
+			foreach (array_keys($composerArray['require']) as $composerPackageName) {
+				if (in_array($composerPackageName, $composerLockPackageNames)) {
+					$composerArray['require'][$composerPackageName] = $composerLockPackageMap[$composerPackageName]['version'];
+				}
+				else {
+					unset($composerArray['require'][$composerPackageName]);
+				}
+			}
+		}
+		
+		$composerArray['require'] = array_merge($composerArray['require'], $pluginRequirements);
+		
+		file_put_contents(self::COMPOSER_PATH, json_encode($composerArray));
+	}
+	
 	private function addPluginRequirementsToComposerFile(array $pluginRequirements) {
 		$composerArray = json_decode(file_get_contents(self::COMPOSER_PATH), true);
 		
 		if ($composerArray === null) {
 			throw new \Exception('Could not read composer file');
 		}
-
+		
 		$composerArray['require'] = array_merge($composerArray['require'], $pluginRequirements);
 		
 		file_put_contents(self::COMPOSER_PATH, json_encode($composerArray));
@@ -178,10 +216,6 @@ class PluginManager {
 	}
 	
 	private function createPluginLockFile(array $pluginRequirements) {
-		if (is_file(self::COMPOSER_LOCK_PATH) === false) {
-			sleep(1);
-		}
-		
 		$composerLockArray = json_decode(file_get_contents(self::COMPOSER_LOCK_PATH), true);
 		
 		$pluginNames = array_keys($pluginRequirements);
