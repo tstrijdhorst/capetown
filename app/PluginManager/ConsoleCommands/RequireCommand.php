@@ -15,14 +15,14 @@ class RequireCommand extends Command {
 	private $pluginManager;
 	
 	public function __construct(PluginManager $pluginManager) {
-		parent::__construct($name=null);
+		parent::__construct($name = null);
 		$this->pluginManager = $pluginManager;
 	}
 	
 	protected function configure() {
 		$this->setName('plugins:require')
 			 ->setDescription('Require a new plugin')
-			->setHelp('Require a new plugin. Automatically refreshes the enabled commands and syncs configuration');
+			 ->setHelp('Require a new plugin. Automatically refreshes the enabled commands and syncs configuration');
 		
 		$this->addArgument('name', InputArgument::REQUIRED, 'The name of the plugin packagist repository');
 		$this->addArgument('version', InputArgument::OPTIONAL, 'The version of the plugin. If not specified, we will choose a suitable one based on the available package versions');
@@ -32,7 +32,7 @@ class RequireCommand extends Command {
 	}
 	
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$name = $input->getArgument('name');
+		$name    = $input->getArgument('name');
 		$version = $input->getArgument('version');
 		
 		$versionString = $version !== null ? $version : 'unspecified';
