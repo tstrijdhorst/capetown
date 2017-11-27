@@ -162,7 +162,7 @@ class PluginManager {
 	}
 	
 	private function runComposerUpdate(array $pluginRequirements, $specificPackageName = null): void {
-		$commandString = getenv('COMPOSER_PATH').' update '.escapeshellarg($specificPackageName).' 2>&1';
+		$commandString = getenv('COMPOSER_PATH').' update '.escapeshellarg($specificPackageName);
 		
 		$packageNames = array_keys($pluginRequirements);
 		foreach ($packageNames as $packageName) {
@@ -173,7 +173,7 @@ class PluginManager {
 	}
 	
 	private function runComposerInstall(): void {
-		$commandString = getenv('COMPOSER_PATH').' install 2>&1';
+		$commandString = getenv('COMPOSER_PATH').' install';
 		
 		exec($commandString, $output);
 	}
