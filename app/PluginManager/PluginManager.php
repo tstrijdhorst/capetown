@@ -101,6 +101,14 @@ class PluginManager {
 	private function getPluginRequirements(): array {
 		$pluginArray = $this->getPluginArray();
 		
+		if ($pluginArray === []) {
+			return [];
+		}
+		
+		if (isset($pluginArray['require']) === false) {
+			throw new CapetownException('Malformed plugins.json, we could not find the required plugins');
+		}
+		
 		$pluginRequirements = $pluginArray['require'];
 		return $pluginRequirements;
 	}
