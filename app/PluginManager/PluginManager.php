@@ -95,7 +95,7 @@ class PluginManager {
 	}
 	
 	/**
-	 * @throws \Exception
+	 * @throws CapetownException
 	 * @return array
 	 */
 	private function getPluginRequirements(): array {
@@ -119,7 +119,7 @@ class PluginManager {
 	private function replacePluginRequirementsInComposerFile($pluginRequirements) {
 		$composerArray = json_decode(file_get_contents(self::COMPOSER_PATH), true);
 		if ($composerArray === null) {
-			throw new \Exception('Could not read composer file');
+			throw new CapetownException('Could not read composer file');
 		}
 		
 		/**
@@ -130,7 +130,7 @@ class PluginManager {
 		if ($composerLockFile !== false) {
 			$composerLockArray = json_decode($composerLockFile, true);
 			if ($composerArray === null) {
-				throw new \Exception('Could not read composer lock file');
+				throw new CapetownException('Could not read composer lock file');
 			}
 			
 			$composerLockPackageMap = [];
@@ -298,12 +298,12 @@ class PluginManager {
 	
 	/**
 	 * @return array
-	 * @throws \Exception
+	 * @throws CapetownException
 	 */
 	private function getComposerArray(): array {
 		$composerArray = json_decode(file_get_contents(self::COMPOSER_PATH), true);
 		if ($composerArray === null) {
-			throw new \Exception('Could not read composer file');
+			throw new CapetownException('Could not read composer file');
 		}
 		
 		return $composerArray;
@@ -311,13 +311,13 @@ class PluginManager {
 	
 	/**
 	 * @return array
-	 * @throws \Exception
+	 * @throws CapetownException
 	 */
 	private function getComposerLockArray(): array {
 		$composerLockArray = json_decode(file_get_contents(self::COMPOSER_LOCK_PATH), true);
 		
 		if ($composerLockArray === null) {
-			throw new \Exception('Could not read composer lock file');
+			throw new CapetownException('Could not read composer lock file');
 		}
 		
 		return $composerLockArray;
@@ -325,7 +325,7 @@ class PluginManager {
 	
 	/**
 	 * @return array
-	 * @throws \Exception
+	 * @throws CapetownException
 	 */
 	private function getPluginArray() {
 		if (is_file(self::PLUGIN_PATH) === false) {
@@ -335,7 +335,7 @@ class PluginManager {
 		$pluginArray = json_decode(file_get_contents(self::PLUGIN_PATH), true);
 		
 		if ($pluginArray === null) {
-			throw new \Exception('Could not read plugins file');
+			throw new CapetownException('Could not read plugins file');
 		}
 		
 		return $pluginArray;
@@ -343,7 +343,7 @@ class PluginManager {
 	
 	/**
 	 * @return array
-	 * @throws \Exception
+	 * @throws CapetownException
 	 */
 	private function getPluginLockArray(): array {
 		if (is_file(self::PLUGIN_LOCK_PATH) === false) {
@@ -353,7 +353,7 @@ class PluginManager {
 		$pluginLockArray = json_decode(file_get_contents(self::PLUGIN_LOCK_PATH), true);
 		
 		if ($pluginLockArray === null) {
-			throw new \Exception('Could not read plugins lock file');
+			throw new CapetownException('Could not read plugins lock file');
 		}
 		
 		return $pluginLockArray;
