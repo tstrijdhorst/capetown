@@ -1,6 +1,6 @@
 <?php
 
-namespace Capetown\Runner\PluginManager\ConsoleCommands;
+namespace Capetown\Runner\PluginManager;
 
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,7 +18,7 @@ class InteractiveConfigurator {
 			$valueProvided = $questionHelper->ask(
 				$input,
 				$output,
-				new Question($key, (string)$valueDefault)
+				new Question('Key: '.$key.'= ? (default: '.(string)$valueDefault.')', $valueDefault)
 			);
 			
 			$configMapProvided[$key] = $valueProvided;

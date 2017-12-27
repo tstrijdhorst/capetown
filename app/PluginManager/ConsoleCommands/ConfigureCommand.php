@@ -7,6 +7,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Capetown\Runner\PluginManager\InteractiveConfigurator;
 
 class ConfigureCommand extends Command {
 	/** @var PluginManager */
@@ -30,7 +31,7 @@ class ConfigureCommand extends Command {
 			$wantsToConfigurePlugin = $questionHelper->ask(
 				$input,
 				$output,
-				new ConfirmationQuestion('Would you like to configure plugin: '.$pluginName, false)
+				new ConfirmationQuestion('Would you like to configure plugin: '.$pluginName.'? (y/N): ', false)
 			);
 			
 			if ($wantsToConfigurePlugin) {
