@@ -82,14 +82,18 @@ class PluginManager {
 		$this->updatePlugins($refreshCommands, $packageName);
 	}
 	
-	public function getPluginConfigFilePaths(array $pluginRequirements): array {
-		$pluginNames = array_keys($pluginRequirements);
+	/**
+	 * @return array <pluginName, configFilePath>
+	 * @throws CapetownException
+	 */
+	public function getPluginConfigFilePaths(): array {
+		$pluginNames = array_keys($this->getPluginRequirements());
 		
 		$configPathMap = [];
 		foreach ($pluginNames as $pluginName) {
 			$pluginConfigPath = self::VENDOR_PATH.$pluginName.'/.env.dist';
 			if (file_exists($pluginConfigPath)) {
-				$configPathMap[] = $pluginConfigPath;
+				$configPathMap[$pluginName] = $pluginConfigPath;
 			}
 		}
 		
