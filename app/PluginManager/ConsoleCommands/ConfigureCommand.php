@@ -37,8 +37,7 @@ class ConfigureCommand extends Command {
 			);
 			
 			if ($wantsToConfigurePlugin) {
-				$configurator = new InteractiveConfigurator($configFilePath, $input, $output, $this->questionHelper);
-				$configurator->askForConfigValues();
+				InteractiveConfigurator::askForConfigValues($configFilePath, $input, $output, $this->questionHelper);
 			}
 		}
 	}

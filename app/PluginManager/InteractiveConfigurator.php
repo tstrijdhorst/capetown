@@ -9,51 +9,33 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 
 class InteractiveConfigurator {
-	/** @var InputInterface */
-	private $input;
-	/** @var OutputInterface */
-	private $output;
-	/** @var array */
-	private $configMap;
-	/** @var string */
-	private $configFilePath;
-	/** @var QuestionHelper */
-	private $questionHelper;
-	
-	public function __construct(string $configFilePath, InputInterface $input, OutputInterface $output, QuestionHelper $questionHelper) {
-		$this->input          = $input;
-		$this->output         = $output;
-		$this->configMap      = $this->transformEnvFileToKeyValueMap($configFilePath);
-		$this->configFilePath = $configFilePath;
-		$this->questionHelper = $questionHelper;
-	}
-	
-	public function askForConfigValues(): void {
-		$this->output->writeln('Configuring '.$this->configFilePath);
+	public static function askForConfigValues(string $configFilePath, InputInterface $input, OutputInterface $output, QuestionHelper $questionHelper): void {
+		$output->writeln('Configuring '.$configFilePath);
 		
+		$configMapDefault  = self::transformEnvFileToKeyValueMap($configFilePath);
 		$configMapProvided = [];
-		foreach ($this->configMap as $key => $valueDefault) {
-			$valueProvided = $this->questionHelper->ask(
-				$this->input,
-				$this->output,
+		foreach ($configMapDefault as $key => $valueDefault) {
+			$valueProvided = $questionHelper->ask(
+				$input,
+				$output,
 				new Question($key, (string)$valueDefault)
 			);
 			
 			$configMapProvided[$key] = $valueProvided;
 		}
 		
-		$writeToDisk = $this->questionHelper->ask(
-			$this->input,
-			$this->output,
+		$writeToDisk = $questionHelper->ask(
+			$input,
+			$output,
 			new ConfirmationQuestion('Write the configuration to disk?', false)
 		);
 		
 		if ($writeToDisk) {
-			file_put_contents($this->configFilePath, $this->transformKeyValueMapToEnvFile($this->configMap));
+			file_put_contents($configFilePath, self::transformKeyValueMapToEnvFile($configMapProvided));
 		}
 	}
 	
-	private function transformEnvFileToKeyValueMap(string $configFilePath): array {
+	private static function transformEnvFileToKeyValueMap(string $configFilePath): array {
 		$contents    = file_get_contents($configFilePath);
 		$configLines = explode("\n", $contents);
 		
@@ -70,7 +52,7 @@ class InteractiveConfigurator {
 		return $configMap;
 	}
 	
-	private function transformKeyValueMapToEnvFile(array $configMap): string {
+	private static function transformKeyValueMapToEnvFile(array $configMap): string {
 		$envFile = '';
 		foreach ($configMap as $key => $value) {
 			$envFile = $key.'=';
