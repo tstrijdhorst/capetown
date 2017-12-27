@@ -4,7 +4,6 @@ namespace Capetown\Runner\PluginManager\ConsoleCommands;
 
 use Capetown\Runner\PluginManager\PluginManager;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
@@ -12,13 +11,10 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 class ConfigureCommand extends Command {
 	/** @var PluginManager */
 	private $pluginManager;
-	/** @var QuestionHelper */
-	private $questionHelper;
 	
 	public function __construct(PluginManager $pluginManager) {
 		parent::__construct($name=null);
 		$this->pluginManager = $pluginManager;
-		$this->questionHelper = $this->getHelper('question');
 	}
 	
 	protected function configure() {
@@ -29,15 +25,16 @@ class ConfigureCommand extends Command {
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$configFilePaths = $this->pluginManager->getPluginConfigFilePaths();
 		
+		$questionHelper = $this->getHelper('question');
 		foreach ($configFilePaths as $pluginName => $configFilePath) {
-			$wantsToConfigurePlugin = $this->questionHelper->ask(
+			$wantsToConfigurePlugin = $questionHelper->ask(
 				$input,
 				$output,
 				new ConfirmationQuestion('Would you like to configure plugin: '.$pluginName, false)
 			);
 			
 			if ($wantsToConfigurePlugin) {
-				InteractiveConfigurator::askForConfigValues($configFilePath, $input, $output, $this->questionHelper);
+				InteractiveConfigurator::askForConfigValues($configFilePath, $input, $output, $questionHelper);
 			}
 		}
 	}
