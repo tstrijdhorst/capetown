@@ -24,9 +24,20 @@ class ConfigureCommand extends Command {
 	}
 	
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$configFilePaths = $this->pluginManager->getPluginConfigFilePaths();
-		
 		$questionHelper = $this->getHelper('question');
+		
+		$wantsToRemoveOldConfig = $questionHelper->ask(
+			$input,
+			$output,
+			new ConfirmationQuestion('Would you like to remove leftover configuration files if any? (y/N): ', false)
+		);
+		
+		if ($wantsToRemoveOldConfig) {
+			$this->pluginManager->removeOldPluginConfigFiles();
+			$output->writeln('Any leftover configuration files have been removed');
+		}
+		
+		$configFilePaths = $this->pluginManager->getPluginConfigFilePaths();
 		foreach ($configFilePaths as $pluginName => $configFilePath) {
 			$wantsToConfigurePlugin = $questionHelper->ask(
 				$input,
