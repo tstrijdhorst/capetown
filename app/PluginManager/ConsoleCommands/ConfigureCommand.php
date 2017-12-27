@@ -23,7 +23,7 @@ class ConfigureCommand extends Command {
 	}
 	
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$this->pluginManager->configure();
+		//@todo interactive config
 		$output->writeln('Plugin configuration synced');
 	}
 }

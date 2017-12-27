@@ -21,7 +21,7 @@ class PluginManager {
 		$this->staticCodeAnalyzer = $staticCodeAnalyzer;
 	}
 	
-	public function updatePlugins(bool $refreshCommands = true, bool $syncConfiguration = true, string $specificPackageName = null): void {
+	public function updatePlugins(bool $refreshCommands = true, string $specificPackageName = null): void {
 		$pluginRequirements = $this->getPluginRequirements();
 		
 		$composerLockFileOriginal = file_get_contents(self::COMPOSER_LOCK_PATH);
@@ -36,10 +36,6 @@ class PluginManager {
 				$this->refreshEnabledCommandsConfig($pluginRequirements);
 			}
 			
-			if ($syncConfiguration) {
-				$this->configure();
-			}
-			
 			$this->createPluginLockFile($pluginRequirements);
 		}
 		catch (\Throwable $e) {
@@ -51,7 +47,7 @@ class PluginManager {
 		}
 	}
 	
-	public function installPlugins(bool $refreshCommands = true, bool $syncConfiguration = true): void {
+	public function installPlugins(bool $refreshCommands = true): void {
 		$pluginRequirements = $this->getPluginRequirements();
 		
 		$composerLockFileOriginal = file_get_contents(self::COMPOSER_LOCK_PATH);
@@ -64,10 +60,6 @@ class PluginManager {
 			
 			if ($refreshCommands) {
 				$this->refreshEnabledCommandsConfig($pluginRequirements);
-			}
-			
-			if ($syncConfiguration) {
-				$this->configure();
 			}
 			
 			$this->createPluginLockFile($pluginRequirements);
@@ -85,14 +77,53 @@ class PluginManager {
 		$this->refreshEnabledCommandsConfig($this->getPluginRequirements());
 	}
 	
-	public function configure(): void {
-		$this->removeOldPluginConfigFiles();
-		$this->copyPluginConfigFiles($this->getPluginRequirements());
+	public function require(string $packageName, string $version = null, bool $refreshCommands = true): void {
+		$this->addPluginRequirementToPluginsFile($packageName, $version);
+		$this->updatePlugins($refreshCommands, $packageName);
 	}
 	
-	public function require(string $packageName, string $version = null, bool $refreshCommands = true, bool $syncConfiguration = true): void {
-		$this->addPluginRequirementToPluginsFile($packageName, $version);
-		$this->updatePlugins($refreshCommands, $syncConfiguration, $packageName);
+	public function getPluginConfigFilePaths(array $pluginRequirements): array {
+		$pluginNames = array_keys($pluginRequirements);
+		
+		$configPathMap = [];
+		foreach ($pluginNames as $pluginName) {
+			$pluginConfigPath = self::VENDOR_PATH.$pluginName.'/.env.dist';
+			if (file_exists($pluginConfigPath)) {
+				$configPathMap[] = $pluginConfigPath;
+			}
+		}
+		
+		return $configPathMap;
+	}
+	
+	public function removeOldPluginConfigFiles(): void {
+		$fileNames = scandir(Constants::CONFIG_DIR);
+		
+		foreach ($fileNames as $configFileName) {
+			$skipFiles = ['.', '..', '.env', '.env.dist', 'enabledCommands.json'];
+			if (in_array($configFileName, $skipFiles, true)) {
+				continue;
+			}
+			
+			$configFileNameExploded = explode('.', $configFileName);
+			
+			if (count($configFileNameExploded) === 1) {
+				continue;
+			}
+			
+			$pluginName = $configFileNameExploded[0];
+			$extension  = $configFileNameExploded[1];
+			
+			//Not a config file
+			if ($extension !== 'env') {
+				continue;
+			}
+			
+			$pluginPath = self::VENDOR_PATH.str_replace('_', '/', $pluginName);
+			if (file_exists($pluginPath) === false) {
+				unlink(Constants::CONFIG_DIR.$configFileName);
+			}
+		}
 	}
 	
 	/**
@@ -256,47 +287,6 @@ class PluginManager {
 		} while (count($directoryPaths) > 0);
 		
 		return $phpFilePaths;
-	}
-	
-	private function copyPluginConfigFiles(array $pluginRequirements): void {
-		$pluginNames = array_keys($pluginRequirements);
-		foreach ($pluginNames as $pluginName) {
-			$pluginConfigPath = self::VENDOR_PATH.$pluginName.'/.env.dist';
-			if (file_exists($pluginConfigPath)) {
-				$configFileName = str_replace('/', '_', $pluginName).'.env';
-				copy($pluginConfigPath, Constants::CONFIG_DIR.$configFileName);
-			}
-		}
-	}
-	
-	private function removeOldPluginConfigFiles(): void {
-		$fileNames = scandir(Constants::CONFIG_DIR);
-		
-		foreach ($fileNames as $configFileName) {
-			$skipFiles = ['.', '..', '.env', '.env.dist', 'enabledCommands.json'];
-			if (in_array($configFileName, $skipFiles, true)) {
-				continue;
-			}
-			
-			$configFileNameExploded = explode('.', $configFileName);
-			
-			if (count($configFileNameExploded) === 1) {
-				continue;
-			}
-			
-			$pluginName = $configFileNameExploded[0];
-			$extension  = $configFileNameExploded[1];
-			
-			//Not a config file
-			if ($extension !== 'env') {
-				continue;
-			}
-			
-			$pluginPath = self::VENDOR_PATH.str_replace('_', '/', $pluginName);
-			if (file_exists($pluginPath) === false) {
-				unlink(Constants::CONFIG_DIR.$configFileName);
-			}
-		}
 	}
 	
 	private function createPluginLockFile(array $pluginRequirements) {

@@ -31,7 +31,6 @@ class InstallCommand extends Command {
 		$output->writeln('Installing plugins');
 		
 		$refreshCommands   = $input->getOption('no-refresh') === false;
-		$syncConfiguration = $input->getOption('no-configure') === false;
-		$this->pluginManager->installPlugins($refreshCommands, $syncConfiguration);
+		$this->pluginManager->installPlugins($refreshCommands);
 	}
 }
