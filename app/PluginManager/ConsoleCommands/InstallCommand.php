@@ -9,7 +9,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class InstallCommand extends Command {
-	
 	/** @var PluginManager */
 	private $pluginManager;
 	
